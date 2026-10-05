@@ -1,9 +1,9 @@
 /* ============================================================
-   SERVICE WORKER — Solar Panel Calculator by MagicWhale
-   Versie: 1.0.0
+   SERVICE WORKER — Solar Panel Calculator by GroenKlimaat
+   Versie: 1.0.2
    ============================================================ */
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.0.2';
 const CACHE_NAME    = `solar-calc-${CACHE_VERSION}`;
 const OFFLINE_URL   = './offline.html';
 
@@ -13,19 +13,11 @@ const PRECACHE_ASSETS = [
   './manifest.json',
   './offline.html',
   './privacy.html',
-  './icons/icon-72x72.png',
-  './icons/icon-96x96.png',
-  './icons/icon-128x128.png',
-  './icons/icon-144x144.png',
-  './icons/icon-152x152.png',
-  './icons/icon-192x192.png',
-  './icons/icon-256x256.png',
-  './icons/icon-384x384.png',
-  './icons/icon-512x512.png',
-  './icons/icon-maskable-192x192.png',
-  './icons/icon-maskable-512x512.png',
-  './icons/apple-touch-icon.png',
-  './icons/favicon.ico'
+  './icon.svg',
+  './icon_72x72.png',
+  './icon_96x96.png',
+  './icon_512x512_192x192.png',
+  './icon_512x512_512x512.png'
 ];
 
 const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
