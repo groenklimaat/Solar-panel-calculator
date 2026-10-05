@@ -1,70 +1,117 @@
-{
-  "name": "Solar Panel Calculator by GroenKlimaat",
-  "short_name": "SolarCalc",
-  "description": "🌞 Calculate the exact power and yield of your solar panel system. 14 languages, works offline.",
-  "lang": "en",
-  "dir": "ltr",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "orientation": "any",
-  "background_color": "#FFB347",
-  "theme_color": "#10B981",
-  "categories": ["utilities", "productivity", "business", "education"],
-  "prefer_related_applications": false,
-  "icons": [
-    {
-      "src": "icon_72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon_96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon_512x512_192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon_512x512_512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon_512x512_512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "New Calculation",
-      "short_name": "Calculate",
-      "description": "Start a new solar panel calculation",
-      "url": "./index.html",
-      "icons": [{ "src": "icon_96x96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Privacy Policy",
-      "short_name": "Privacy",
-      "description": "Read the privacy policy",
-      "url": "./privacy.html",
-      "icons": [{ "src": "icon_96x96.png", "sizes": "96x96" }]
-    }
-  ]
-}
+/* ============================================================
+   SERVICE WORKER — Solar Panel Calculator by GroenKlimaat
+   Versie: 1.0.3
+   ============================================================ */
+
+const CACHE_VERSION = 'v1.0.3';
+const CACHE_NAME    = `solar-calc-${CACHE_VERSION}`;
+const OFFLINE_URL   = './offline.html';
+
+const PRECACHE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './offline.html',
+  './privacy.html',
+  './icon.svg',
+  './icon_72x72.png',
+  './icon_96x96.png',
+  './icon_512x512_192x192.png',
+  './icon_512x512_512x512.png'
+];
+
+const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(PRECACHE_ASSETS);
+      await self.skipWaiting();
+    })()
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter(key => key.startsWith('solar-calc-') && key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      );
+      await self.clients.claim();
+    })()
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request);
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, networkResponse.clone());
+          return networkResponse;
+        } catch (err) {
+          const cache = await caches.open(CACHE_NAME);
+          const cached = await cache.match(request);
+          return cached || cache.match(OFFLINE_URL);
+        }
+      })()
+    );
+    return;
+  }
+
+  if (CDN_HOSTS.includes(url.hostname)) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(request);
+        const fetchPromise = fetch(request)
+          .then(response => {
+            if (response && response.status === 200) {
+              cache.put(request, response.clone());
+            }
+            return response;
+          })
+          .catch(() => cached);
+        return cached || fetchPromise;
+      })()
+    );
+    return;
+  }
+
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(request);
+        if (cached) return cached;
+        try {
+          const networkResponse = await fetch(request);
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (err) {
+          return caches.match(OFFLINE_URL);
+        }
+      })()
+    );
+  }
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+  }
+});
