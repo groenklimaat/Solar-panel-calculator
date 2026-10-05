@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline | Solar Panel Calculator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFD166 25%, #FFB347 50%, #FF8C00 75%, #10B981 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #0F172A; padding: 24px;
+    position: relative; overflow: hidden;
+  }
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  body::before {
+    content: ''; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 900px; height: 900px;
+    background: repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.35) 0deg 6deg,
+      rgba(255, 255, 255, 0)    6deg 18deg
+    );
+    border-radius: 50%;
+    animation: sunRays 60s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes sunRays {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+  .card {
+    position: relative; z-index: 2;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+    border-radius: 28px; padding: 48px 40px;
+    max-width: 500px; text-align: center;
+    box-shadow: 0 24px 60px rgba(255, 140, 0, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 179, 71, 0.5);
+  }
+  .icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, #FFB347 0%, #FF8C00 50%, #10B981 100%);
+    color: white; font-size: 3rem; margin-bottom: 24px;
+    box-shadow: 0 0 0 8px rgba(255, 179, 71, 0.25), 0 0 0 16px rgba(16, 185, 129, 0.15), 0 12px 32px rgba(255, 140, 0, 0.4);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+  h1 {
+    font-size: 1.9rem; margin-bottom: 14px;
+    background: linear-gradient(135deg, #FF8C00 0%, #10B981 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800; letter-spacing: -0.02em;
+  }
+  p { color: #64748B; line-height: 1.6; margin-bottom: 28px; font-size: 1rem; }
+  button {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white; border: none; padding: 16px 36px; border-radius: 14px;
+    font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(16, 185, 129, 0.55);
+  }
+  .contact {
+    margin-top: 28px; padding-top: 20px;
+    border-top: 2px dashed rgba(255, 179, 71, 0.4);
+    font-size: 0.85rem; color: #94A3B8;
+  }
+  .contact a {
+    color: #10B981; text-decoration: none; font-weight: 700;
+  }
+  .contact a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1>You are offline</h1>
+    <p>It looks like you don't have an internet connection right now. The Solar Panel Calculator needs to be loaded once while online before it can work fully offline.</p>
+    <button onclick="window.location.reload()">
+      <span>🔄</span>
+      <span>Try again</span>
+    </button>
+    <div class="contact">
+      Need help? Contact us at
+      <a href="mailto:info@magicwhale.eu">info@magicwhale.eu</a>
+    </div>
+  </div>
+</body>
+</html>
