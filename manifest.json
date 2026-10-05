@@ -1,12 +1,18 @@
 /* ============================================================
    SERVICE WORKER — Solar Panel Calculator by GroenKlimaat
    Versie: 1.0.3
+   ------------------------------------------------------------
+   Strategie:
+     - App shell (HTML + icons) → cache-first
+     - CDN (Chart.js, FontAwesome) → stale-while-revalidate
+     - HTML navigatie → network-first met offline fallback
    ============================================================ */
 
 const CACHE_VERSION = 'v1.0.3';
 const CACHE_NAME    = `solar-calc-${CACHE_VERSION}`;
 const OFFLINE_URL   = './offline.html';
 
+/* Bestanden die altijd offline beschikbaar moeten zijn */
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -20,18 +26,30 @@ const PRECACHE_ASSETS = [
   './icon_512x512_512x512.png'
 ];
 
+/* CDN-bronnen die gecached mogen worden (stale-while-revalidate) */
 const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
 
+/* ============================================================
+   INSTALL — precache de app shell
+   ============================================================ */
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(PRECACHE_ASSETS);
+      console.log('[SW] Pre-caching app shell — version', CACHE_VERSION);
+      try {
+        await cache.addAll(PRECACHE_ASSETS);
+      } catch (err) {
+        console.warn('[SW] Pre-cache failed for some assets:', err);
+      }
       await self.skipWaiting();
     })()
   );
 });
 
+/* ============================================================
+   ACTIVATE — oude caches opruimen
+   ============================================================ */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
@@ -39,19 +57,29 @@ self.addEventListener('activate', (event) => {
       await Promise.all(
         keys
           .filter(key => key.startsWith('solar-calc-') && key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+          .map(key => {
+            console.log('[SW] Removing old cache:', key);
+            return caches.delete(key);
+          })
       );
       await self.clients.claim();
+      console.log('[SW] Activated — version', CACHE_VERSION);
     })()
   );
 });
 
+/* ============================================================
+   FETCH — caching-strategieën
+   ============================================================ */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+
+  // Alleen GET-requests cachen
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
 
+  /* 1. HTML-navigatie → network-first, offline fallback */
   if (request.mode === 'navigate') {
     event.respondWith(
       (async () => {
@@ -70,11 +98,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  /* 2. CDN-bronnen → stale-while-revalidate */
   if (CDN_HOSTS.includes(url.hostname)) {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE_NAME);
         const cached = await cache.match(request);
+
         const fetchPromise = fetch(request)
           .then(response => {
             if (response && response.status === 200) {
@@ -83,18 +113,21 @@ self.addEventListener('fetch', (event) => {
             return response;
           })
           .catch(() => cached);
+
         return cached || fetchPromise;
       })()
     );
     return;
   }
 
+  /* 3. Zelfde origin (app shell, icons) → cache-first */
   if (url.origin === self.location.origin) {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE_NAME);
         const cached = await cache.match(request);
         if (cached) return cached;
+
         try {
           const networkResponse = await fetch(request);
           if (networkResponse && networkResponse.status === 200) {
@@ -106,12 +139,22 @@ self.addEventListener('fetch', (event) => {
         }
       })()
     );
+    return;
   }
+
+  /* 4. Alle andere requests → gewoon doorlaten */
 });
 
+/* ============================================================
+   MESSAGE — handmatige cache-update mogelijk maken
+   ============================================================ */
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
   if (event.data && event.data.type === 'CLEAR_CACHE') {
-    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+    caches.keys().then(keys =>
+      Promise.all(keys.map(key => caches.delete(key)))
+    );
   }
 });
