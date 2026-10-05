@@ -4,26 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar Panel Calculator | GroenKlimaat</title>
-
-<meta name="theme-color" content="#10B981">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SolarCalc">
-<link rel="apple-touch-icon" href="icon_512x512_192x192.png">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<link rel="manifest" href="manifest.json">
-
 <style>
 :root {
-  --sun: #FFB347; --sun-dark: #FF8C00; --green: #10B981; --green-dark: #059669;
-  --blue: #3B82F6; --dark: #0F172A; --dark-2: #1E293B;
-  --text: #0F172A; --text-light: #64748B; --text-muted: #94A3B8;
-  --bg: #F8FAFC; --card: #FFFFFF; --border: #E2E8F0; --border-light: #F1F5F9;
+  --sun: #FFB347;
+  --sun-dark: #FF8C00;
+  --green: #10B981;
+  --green-dark: #059669;
+  --blue: #3B82F6;
+  --dark: #0F172A;
+  --dark-2: #1E293B;
+  --text: #0F172A;
+  --text-light: #64748B;
+  --text-muted: #94A3B8;
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
   --shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
@@ -34,6 +33,7 @@ body {
   background: var(--bg); color: var(--text); line-height: 1.6;
   min-height: 100vh; padding: 20px; -webkit-font-smoothing: antialiased;
 }
+body.rtl { direction: rtl; text-align: right; }
 .container {
   max-width: 1280px; margin: 0 auto; background: var(--card);
   border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-lg); position: relative;
@@ -42,54 +42,117 @@ body {
   position: absolute; top: 24px; right: 24px; z-index: 100;
   display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
   background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-  padding: 6px; border-radius: 50px; box-shadow: var(--shadow-sm); max-width: 60%;
+  padding: 6px; border-radius: 50px; box-shadow: var(--shadow-sm);
+  max-width: 70%;
 }
 .lang-btn {
   padding: 8px 12px; background: transparent; border: none; border-radius: 50px;
   cursor: pointer; font-weight: 600; font-size: 0.75rem; color: var(--text-light);
-  transition: all 0.2s ease; font-family: inherit;
+  transition: all 0.2s ease; font-family: inherit; display: flex; align-items: center; gap: 4px;
 }
 .lang-btn:hover { background: var(--border-light); color: var(--text); }
 .lang-btn.active { background: var(--green); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+
+/* ============================================================
+   HEADER — GELE ZON ACHTERGROND + GROEN ICOON
+   ============================================================ */
 header {
-  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
-  color: white; padding: 80px 40px 50px; text-align: center;
+  background:
+    radial-gradient(circle at 50% 40%, #FFF9E6 0%, #FFE9A8 30%, #FFD166 55%, #FFB347 80%, #FF8C00 100%);
+  color: var(--dark);
+  padding: 90px 40px 60px;
+  text-align: center;
   position: relative; overflow: hidden;
+  box-shadow: inset 0 -8px 24px rgba(255, 140, 0, 0.15);
 }
 header::before {
-  content: ''; position: absolute; top: -50%; right: -20%;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(255, 179, 71, 0.15) 0%, transparent 70%);
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 900px; height: 900px;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.35) 0deg 6deg,
+      rgba(255, 255, 255, 0)    6deg 18deg
+    );
   border-radius: 50%;
+  pointer-events: none;
+  animation: sunRays 60s linear infinite;
+  opacity: 0.55;
 }
 header::after {
-  content: ''; position: absolute; bottom: -30%; left: -10%;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
-  border-radius: 50%;
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 55%, rgba(255, 140, 0, 0.25) 100%);
+  pointer-events: none;
 }
-.header-content { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+@keyframes sunRays {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.header-content { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
 h1 {
-  font-size: 2.8rem; margin-bottom: 16px; color: white; font-weight: 800;
+  font-size: 2.8rem; margin-bottom: 16px; color: var(--dark); font-weight: 800;
   letter-spacing: -0.02em; display: flex; align-items: center;
   justify-content: center; gap: 16px; line-height: 1.2; flex-wrap: wrap;
+  text-shadow: 0 2px 6px rgba(255, 255, 255, 0.6);
 }
-h1 i { color: var(--sun); filter: drop-shadow(0 0 20px rgba(255, 179, 71, 0.5)); }
-.subtitle { font-size: 1.15rem; color: rgba(255, 255, 255, 0.75); max-width: 600px; margin: 0 auto; }
-.main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 40px; }
+h1 i {
+  color: var(--green);
+  background: rgba(255, 255, 255, 0.9);
+  width: 82px; height: 82px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 2.2rem;
+  box-shadow:
+    0 0 0 8px rgba(16, 185, 129, 0.15),
+    0 0 0 16px rgba(16, 185, 129, 0.08),
+    0 8px 24px rgba(16, 185, 129, 0.4);
+  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5));
+  animation: greenPulse 3s ease-in-out infinite;
+}
+@keyframes greenPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 8px rgba(16, 185, 129, 0.15),
+      0 0 0 16px rgba(16, 185, 129, 0.08),
+      0 8px 24px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 12px rgba(16, 185, 129, 0.20),
+      0 0 0 24px rgba(16, 185, 129, 0.10),
+      0 12px 32px rgba(16, 185, 129, 0.55);
+  }
+}
+.subtitle {
+  font-size: 1.15rem; color: #4A3B12;
+  font-weight: 500; max-width: 600px; margin: 0 auto;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; padding: 40px;
+}
 @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
 .input-section, .results-section {
   background: var(--card); border-radius: 20px; padding: 32px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border); transition: all 0.2s;
 }
 .input-section { background: #FAFBFC; }
 .section-title {
   color: var(--text); font-size: 1.4rem; margin-bottom: 28px;
   padding-bottom: 16px; border-bottom: 2px solid var(--border);
-  display: flex; align-items: center; gap: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 700; letter-spacing: -0.01em;
 }
 .section-title i { color: var(--green); }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+.input-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;
+}
 @media (max-width: 768px) { .input-grid { grid-template-columns: 1fr; } }
 .input-group { display: flex; flex-direction: column; }
 .input-group.full-width { grid-column: 1 / -1; }
@@ -100,8 +163,8 @@ h1 i { color: var(--sun); filter: drop-shadow(0 0 20px rgba(255, 179, 71, 0.5));
 .input-group label i { color: var(--green); font-size: 0.85rem; }
 .input-group input, .input-group select {
   padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px;
-  font-size: 0.95rem; background: white; font-family: inherit;
-  color: var(--text); font-weight: 500;
+  font-size: 0.95rem; transition: all 0.2s; background: white;
+  font-family: inherit; color: var(--text); font-weight: 500;
 }
 .input-group input:focus, .input-group select:focus {
   outline: none; border-color: var(--green);
@@ -120,42 +183,59 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
   background: white; cursor: pointer; border: 3px solid var(--green);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); transition: all 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
 }
 .calculate-btn {
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
   color: white; border: none; padding: 18px 32px; border-radius: 14px;
   cursor: pointer; font-size: 1.05rem; font-weight: 700; width: 100%;
   margin: 8px 0 24px; display: flex; align-items: center; justify-content: center;
-  gap: 12px; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); font-family: inherit;
+  gap: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); font-family: inherit;
 }
 .calculate-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16, 185, 129, 0.4); }
-.results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
+.results-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px;
+}
 .result-card {
   background: #FAFBFC; border-radius: 16px; padding: 24px 20px;
   text-align: center; border: 2px solid var(--border-light);
-  transition: all 0.3s ease; position: relative; overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
+}
+.result-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--sun));
+  opacity: 0; transition: opacity 0.3s;
 }
 .result-card:hover { transform: translateY(-4px); border-color: var(--green); box-shadow: var(--shadow); }
+.result-card:hover::before { opacity: 1; }
 .result-card.primary {
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
   color: white; border-color: transparent;
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
 }
+.result-card.primary:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45); }
+.result-card.primary::before { opacity: 1; background: linear-gradient(90deg, var(--sun), #FFF3C4); }
 .result-card.primary .result-label { color: rgba(255, 255, 255, 0.85); }
 .result-card.primary .result-value { color: white; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
 .result-card.primary .result-unit { color: rgba(255, 255, 255, 0.75); }
 .result-label {
   font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;
-  display: block; font-weight: 600; text-transform: uppercase;
+  display: block; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
 }
 .result-value { font-size: 2.2rem; font-weight: 800; color: var(--text); line-height: 1.1; }
-.result-unit { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: block; }
+.result-unit { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: block; font-weight: 500; }
 .chart-container {
   background: #FAFBFC; border-radius: 16px; padding: 24px;
   margin-bottom: 20px; border: 1px solid var(--border-light);
 }
-.chart-container h3 { color: var(--text); margin-bottom: 20px; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.chart-container h3 {
+  color: var(--text); margin-bottom: 20px; font-size: 1.1rem; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
 .chart-container h3 i { color: var(--sun); }
 .chart-box { height: 260px; width: 100%; position: relative; }
 .comparison-table {
@@ -166,102 +246,127 @@ input[type="range"]::-webkit-slider-thumb {
 .comparison-table th {
   background: var(--dark); color: white; padding: 14px 16px;
   text-align: left; font-weight: 600; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 0.03em;
 }
-.comparison-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-light); }
+.comparison-table td {
+  padding: 14px 16px; border-bottom: 1px solid var(--border-light); color: var(--text);
+}
+.comparison-table tr:last-child td { border-bottom: none; }
 .comparison-table tr:hover { background: #FAFBFC; }
 .info-box {
   background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
   border-left: 4px solid var(--green); padding: 20px;
   border-radius: 12px; margin-top: 24px;
 }
-.info-box h4 { color: var(--green-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
-.info-box p { color: var(--text-light); line-height: 1.8; font-size: 0.9rem; }
-footer { text-align: center; padding: 32px; background: var(--dark); color: white; margin-top: 40px; }
+.info-box h4 {
+  color: var(--green-dark); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 0.95rem;
+}
+.info-box p { color: var(--text-light); line-height: 1.7; font-size: 0.9rem; }
+footer {
+  text-align: center; padding: 32px; background: var(--dark);
+  color: white; margin-top: 40px;
+}
 .footer-content { max-width: 800px; margin: 0 auto; }
 footer p { margin-bottom: 8px; color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; }
-footer a { color: var(--green); text-decoration: none; font-weight: 600; transition: color 0.2s; }
-footer a:hover { color: #34D399; text-decoration: underline; }
-
-#installBtn {
-  position: fixed; bottom: 24px; right: 24px;
-  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
-  color: white; border: none; padding: 14px 24px; border-radius: 50px;
-  font-size: 0.9rem; font-weight: 700; font-family: inherit; cursor: pointer;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); display: none;
-  align-items: center; gap: 10px; z-index: 999;
-}
-#installBtn.show { display: inline-flex; }
-#installBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5); }
-
 @media (max-width: 768px) {
   body { padding: 10px; }
+  .container { border-radius: 18px; }
   header { padding: 130px 24px 40px; }
   h1 { font-size: 2rem; flex-direction: column; gap: 10px; }
+  h1 i { width: 68px; height: 68px; font-size: 1.8rem; }
+  .subtitle { font-size: 1rem; }
   .main-content { padding: 24px; gap: 24px; }
   .input-section, .results-section { padding: 24px; }
-  .results-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; gap: 12px; }
   .result-value { font-size: 1.9rem; }
-  .language-selector { position: relative; top: 0; right: 0; margin: 20px auto 0; max-width: 100%; }
-  #installBtn { bottom: 16px; right: 16px; padding: 12px 20px; }
+  .language-selector { position: relative; top: 0; right: 0; justify-content: center; margin: 20px auto 0; max-width: 100%; }
+  .section-title { font-size: 1.2rem; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: 1.7rem; }
+  h1 i { width: 60px; height: 60px; font-size: 1.6rem; }
+  .result-value { font-size: 1.7rem; }
+  .lang-btn { padding: 6px 8px; font-size: 0.7rem; }
 }
 </style>
 </head>
 <body>
 <div class="container">
-  <!-- Language selector: alphabetical order by English language name -->
   <div class="language-selector">
-    <button class="lang-btn" data-lang="zh">中文</button>
-    <button class="lang-btn" data-lang="nl">NL</button>
     <button class="lang-btn active" data-lang="en">EN</button>
-    <button class="lang-btn" data-lang="fr">FR</button>
+    <button class="lang-btn" data-lang="nl">NL</button>
     <button class="lang-btn" data-lang="de">DE</button>
-    <button class="lang-btn" data-lang="it">IT</button>
-    <button class="lang-btn" data-lang="ja">日本語</button>
-    <button class="lang-btn" data-lang="la">LA</button>
-    <button class="lang-btn" data-lang="no">NO</button>
-    <button class="lang-btn" data-lang="pt">PT</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
     <button class="lang-btn" data-lang="es">ES</button>
+    <button class="lang-btn" data-lang="pt">PT</button>
     <button class="lang-btn" data-lang="sv">SV</button>
-    <button class="lang-btn" data-lang="uk">UK</button>
+    <button class="lang-btn" data-lang="ja">日本語</button>
+    <button class="lang-btn" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="la">LA</button>
   </div>
 
   <header>
     <div class="header-content">
-      <h1><i class="fas fa-solar-panel"></i> <span data-i18n="title">Solar Panel Calculator</span></h1>
+      <h1>
+        <i class="fas fa-solar-panel"></i>
+        <span data-i18n="title">Solar Panel Calculator</span>
+      </h1>
       <p class="subtitle" data-i18n="subtitle">Calculate the exact power and yield of your solar panel system</p>
     </div>
   </header>
 
   <div class="main-content">
     <section class="input-section">
-      <h2 class="section-title"><i class="fas fa-sliders-h"></i> <span data-i18n="inputTitle">System Parameters</span></h2>
+      <h2 class="section-title">
+        <i class="fas fa-sliders-h"></i>
+        <span data-i18n="inputTitle">System Parameters</span>
+      </h2>
+
       <div class="input-grid">
         <div class="input-group">
-          <label for="panelCount"><i class="fas fa-th-large"></i> <span data-i18n="panelCount">Number of panels</span></label>
+          <label for="panelCount"><i class="fas fa-th-large"></i>
+            <span data-i18n="panelCount">Number of panels</span></label>
           <input type="number" id="panelCount" min="1" max="200" value="12">
           <div class="input-hint" data-i18n="panelCountHint">Typically 8-16 for a house</div>
         </div>
+
         <div class="input-group">
-          <label for="panelPower"><i class="fas fa-bolt"></i> <span data-i18n="panelPower">Power per panel (Wp)</span></label>
+          <label for="panelPower"><i class="fas fa-bolt"></i>
+            <span data-i18n="panelPower">Power per panel (Wp)</span></label>
           <input type="number" id="panelPower" min="100" max="700" value="400">
           <div class="input-hint" data-i18n="panelPowerHint">Modern panels: 350-550 Wp</div>
         </div>
+
         <div class="input-group full-width">
-          <label for="efficiency"><i class="fas fa-percentage"></i> <span data-i18n="efficiency">System efficiency (%)</span></label>
+          <label for="efficiency"><i class="fas fa-percentage"></i>
+            <span data-i18n="efficiency">System efficiency (%)</span></label>
           <input type="range" id="efficiency" min="70" max="95" step="1" value="85">
-          <div class="slider-value"><span>70%</span><span id="efficiencyValue">85%</span><span>95%</span></div>
+          <div class="slider-value">
+            <span>70%</span>
+            <span id="efficiencyValue">85%</span>
+            <span>95%</span>
+          </div>
           <div class="input-hint" data-i18n="efficiencyHint">Affected by inverter, orientation & shading</div>
         </div>
+
+        <!-- ==============================================
+             REGIO ZONDER CONTINENTEN — WERELDWIJD BRUIKBAAR
+             ============================================== -->
         <div class="input-group">
-          <label for="location"><i class="fas fa-map-marker-alt"></i> <span data-i18n="location">Region / Solar irradiation</span></label>
+          <label for="location"><i class="fas fa-map-marker-alt"></i>
+            <span data-i18n="location">Solar irradiation</span></label>
           <select id="location">
-            <option value="1.05" data-i18n="loc1">Netherlands/Belgium (Average)</option>
-            <option value="1.15" data-i18n="loc2">Southern Europe (High)</option>
-            <option value="0.95" data-i18n="loc3">Northern Europe (Low)</option>
+            <option value="1.05" data-i18n="loc1">Average (Central)</option>
+            <option value="1.15" data-i18n="loc2">High (Sunny)</option>
+            <option value="0.95" data-i18n="loc3">Low (Cloudy)</option>
           </select>
         </div>
+
         <div class="input-group">
-          <label for="roofAngle"><i class="fas fa-mountain"></i> <span data-i18n="roofAngle">Roof tilt & Direction</span></label>
+          <label for="roofAngle"><i class="fas fa-mountain"></i>
+            <span data-i18n="roofAngle">Roof tilt & Direction</span></label>
           <select id="roofAngle">
             <option value="1.0" data-i18n="roof1">Ideal (South, 35°)</option>
             <option value="0.95" data-i18n="roof2">Good (SE/SW, 25-45°)</option>
@@ -270,15 +375,25 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           </select>
         </div>
       </div>
-      <button class="calculate-btn" id="calculateBtn"><i class="fas fa-calculator"></i> <span data-i18n="calculateBtn">Calculate Yield</span></button>
+
+      <button class="calculate-btn" id="calculateBtn">
+        <i class="fas fa-calculator"></i>
+        <span data-i18n="calculateBtn">Calculate Yield</span>
+      </button>
+
       <div class="info-box">
-        <h4><i class="fas fa-lightbulb"></i> <span data-i18n="infoTitle">Tips for maximum yield</span></h4>
-        <p data-i18n="infoText"></p>
+        <h4><i class="fas fa-lightbulb"></i>
+          <span data-i18n="infoTitle">Tips for maximum yield</span></h4>
+        <p data-i18n="infoText">• Southern orientation (between Southeast and Southwest)<br>• Tilt angle between 20° and 40°<br>• Ensure shade-free installation<br>• Quality inverter for optimal efficiency</p>
       </div>
     </section>
 
     <section class="results-section">
-      <h2 class="section-title"><i class="fas fa-chart-line"></i> <span data-i18n="resultsTitle">Calculation Results</span></h2>
+      <h2 class="section-title">
+        <i class="fas fa-chart-line"></i>
+        <span data-i18n="resultsTitle">Calculation Results</span>
+      </h2>
+
       <div class="results-grid">
         <div class="result-card primary">
           <span class="result-label" data-i18n="totalPower">Total Power</span>
@@ -301,14 +416,19 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           <span class="result-unit" data-i18n="ofConsumption">of consumption</span>
         </div>
       </div>
+
       <div class="chart-container">
-        <h3><i class="fas fa-chart-pie"></i> <span data-i18n="seasonalChart">Seasonal Yield</span></h3>
+        <h3><i class="fas fa-chart-pie"></i>
+          <span data-i18n="seasonalChart">Seasonal Yield</span></h3>
         <div class="chart-box"><canvas id="seasonChart"></canvas></div>
       </div>
+
       <div class="chart-container">
-        <h3><i class="fas fa-chart-bar"></i> <span data-i18n="monthlyChart">Monthly Production</span></h3>
+        <h3><i class="fas fa-chart-bar"></i>
+          <span data-i18n="monthlyChart">Monthly Production</span></h3>
         <div class="chart-box"><canvas id="monthlyChart"></canvas></div>
       </div>
+
       <table class="comparison-table">
         <thead>
           <tr>
@@ -318,10 +438,26 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           </tr>
         </thead>
         <tbody>
-          <tr><td data-i18n="panelType">Panel type</td><td id="panelTypeValue">Monocrystalline</td><td id="panelTypeImpact">+15%</td></tr>
-          <tr><td data-i18n="inverterEff">Inverter efficiency</td><td id="inverterEffValue">97%</td><td id="inverterEffImpact">High</td></tr>
-          <tr><td data-i18n="temperature">Temperature loss</td><td id="temperatureValue">-8%</td><td id="temperatureImpact">Average</td></tr>
-          <tr><td data-i18n="systemLoss">Total system loss</td><td id="systemLossValue">14%</td><td id="systemLossImpact">Normal</td></tr>
+          <tr>
+            <td data-i18n="panelType">Panel type</td>
+            <td id="panelTypeValue">Monocrystalline</td>
+            <td id="panelTypeImpact">+15% vs poly</td>
+          </tr>
+          <tr>
+            <td data-i18n="inverterEff">Inverter efficiency</td>
+            <td id="inverterEffValue">97%</td>
+            <td id="inverterEffImpact">High (±3% loss)</td>
+          </tr>
+          <tr>
+            <td data-i18n="temperature">Temperature loss</td>
+            <td id="temperatureValue">-8%</td>
+            <td id="temperatureImpact">Average (summer)</td>
+          </tr>
+          <tr>
+            <td data-i18n="systemLoss">Total system loss</td>
+            <td id="systemLossValue">14%</td>
+            <td id="systemLossImpact">Normal for installation</td>
+          </tr>
         </tbody>
       </table>
     </section>
@@ -329,410 +465,583 @@ footer a:hover { color: #34D399; text-decoration: underline; }
 
   <footer>
     <div class="footer-content">
-      <p data-i18n="footer1">This calculator provides a realistic estimate.</p>
-      <p>
-        <a href="privacy.html" data-i18n="privacyLink">Privacy Policy</a> ·
-        <a href="terms.html" data-i18n="termsLink">Terms and Conditions</a>
-      </p>
-      <p data-i18n="footer2">© 2026 GroenKlimaat</p>
+      <p data-i18n="footer1">This calculator provides a realistic estimate. Actual yield may vary due to local conditions.</p>
+      <p data-i18n="footer2">© 2026 GroenKlimaat | For professional advice, consult a certified installer.</p>
     </div>
   </footer>
 </div>
 
-<button id="installBtn"><i class="fas fa-download"></i> Install App</button>
-
 <script>
-// ============================================
-// SERVICE WORKER REGISTRATION
-// ============================================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    if (location.protocol === 'https:' || location.hostname === 'localhost') {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(function(reg) { console.log('✅ SW:', reg.scope); })
-        .catch(function(err) { console.log('⚠️ SW:', err.message); });
-    }
-  });
-}
-
-// ============================================
-// INSTALL PROMPT
-// ============================================
-var deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  var btn = document.getElementById('installBtn');
-  if (btn) btn.classList.add('show');
-});
-document.addEventListener('DOMContentLoaded', function() {
-  var installBtn = document.getElementById('installBtn');
-  if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.classList.remove('show');
-    });
-  }
-});
-window.addEventListener('appinstalled', () => {
-  var btn = document.getElementById('installBtn');
-  if (btn) btn.classList.remove('show');
-});
-
-// ============================================
-// TRANSLATIONS
-// ============================================
+/* ============================================================
+   TRANSLATIONS — 10 talen (wereldwijd bruikbaar)
+   ============================================================ */
 const translations = {
   en: {
-    title: "Solar Panel Calculator", subtitle: "Calculate the exact power and yield of your solar panel system",
-    inputTitle: "System Parameters", panelCount: "Number of panels", panelCountHint: "Typically 8-16 for a house",
-    panelPower: "Power per panel (Wp)", panelPowerHint: "Modern panels: 350-550 Wp",
-    efficiency: "System efficiency (%)", efficiencyHint: "Affected by inverter, orientation & shading",
-    location: "Region / Solar irradiation", loc1: "Netherlands/Belgium (Average)", loc2: "Southern Europe (High)", loc3: "Northern Europe (Low)",
-    roofAngle: "Roof tilt & Direction", roof1: "Ideal (South, 35°)", roof2: "Good (SE/SW, 25-45°)", roof3: "Fair (East/West, 15-55°)", roof4: "Suboptimal (North/Flat)",
-    calculateBtn: "Calculate Yield", infoTitle: "Tips for maximum yield",
-    infoText: "• Southern orientation (between SE and SW)<br>• Tilt angle between 20° and 40°<br>• Ensure shade-free installation<br>• Quality inverter for optimal efficiency",
-    resultsTitle: "Calculation Results", totalPower: "Total Power", yearlyProduction: "Annual Production",
-    dailyProduction: "Daily Production (avg.)", coverageRate: "Coverage Rate", ofConsumption: "of consumption",
-    seasonalChart: "Seasonal Yield", monthlyChart: "Monthly Production",
-    parameter: "Parameter", value: "Value", impact: "Impact on yield",
-    panelType: "Panel type", inverterEff: "Inverter efficiency", temperature: "Temperature loss", systemLoss: "Total system loss",
+    title: "Solar Panel Calculator",
+    subtitle: "Calculate the exact power and yield of your solar panel system",
+    inputTitle: "System Parameters",
+    panelCount: "Number of panels",
+    panelCountHint: "Typically 8-16 for a house",
+    panelPower: "Power per panel (Wp)",
+    panelPowerHint: "Modern panels: 350-550 Wp",
+    efficiency: "System efficiency (%)",
+    efficiencyHint: "Affected by inverter, orientation & shading",
+    location: "Solar irradiation",
+    loc1: "Average (Central)",
+    loc2: "High (Sunny)",
+    loc3: "Low (Cloudy)",
+    roofAngle: "Roof tilt & Direction",
+    roof1: "Ideal (South, 35°)",
+    roof2: "Good (SE/SW, 25-45°)",
+    roof3: "Fair (East/West, 15-55°)",
+    roof4: "Suboptimal (North/Flat)",
+    calculateBtn: "Calculate Yield",
+    infoTitle: "Tips for maximum yield",
+    infoText: "• Southern orientation (between Southeast and Southwest)<br>• Tilt angle between 20° and 40°<br>• Ensure shade-free installation<br>• Quality inverter for optimal efficiency",
+    resultsTitle: "Calculation Results",
+    totalPower: "Total Power",
+    yearlyProduction: "Annual Production",
+    dailyProduction: "Daily Production (avg.)",
+    coverageRate: "Coverage Rate",
+    ofConsumption: "of consumption",
+    seasonalChart: "Seasonal Yield",
+    monthlyChart: "Monthly Production",
+    parameter: "Parameter",
+    value: "Value",
+    impact: "Impact on yield",
+    panelType: "Panel type",
+    inverterEff: "Inverter efficiency",
+    temperature: "Temperature loss",
+    systemLoss: "Total system loss",
     footer1: "This calculator provides a realistic estimate. Actual yield may vary due to local conditions.",
     footer2: "© 2026 GroenKlimaat | For professional advice, consult a certified installer.",
-    privacyLink: "Privacy Policy",
-    termsLink: "Terms and Conditions",
     months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    seasons: ["Winter","Spring","Summer","Autumn"]
+    seasons: ["Winter","Spring","Summer","Autumn"],
+    panelImpact15: "+15% vs poly",
+    panelImpact10: "+10% vs poly",
+    panelImpact0: "Standard",
+    invHigh: "High (±3% loss)",
+    invVeryHigh: "Very high (±2% loss)",
+    invAvg: "Average (±5% loss)",
+    tempAvg: "Average (summer)",
+    sysNorm: "Normal for installation"
   },
   nl: {
-    title: "Zonnepanelen Calculator", subtitle: "Bereken exact het vermogen en de opbrengst van uw zonnepanelensysteem",
-    inputTitle: "Systeem Parameters", panelCount: "Aantal panelen", panelCountHint: "Typisch 8-16 voor een woonhuis",
-    panelPower: "Vermogen per paneel (Wp)", panelPowerHint: "Moderne panelen: 350-550 Wp",
-    efficiency: "Systeemefficiëntie (%)", efficiencyHint: "Beïnvloed door omvormer, oriëntatie & schaduw",
-    location: "Regio / Zoninstraling", loc1: "Nederland/België (Gemiddeld)", loc2: "Zuid-Europa (Hoog)", loc3: "Noord-Europa (Laag)",
-    roofAngle: "Dakhelling & Richting", roof1: "Ideaal (Zuid, 35°)", roof2: "Goed (ZO/ZW, 25-45°)", roof3: "Redelijk (O/W, 15-55°)", roof4: "Suboptimaal (Noord/Plat)",
-    calculateBtn: "Bereken Opbrengst", infoTitle: "Tips voor maximale opbrengst",
-    infoText: "• Zuidelijke oriëntatie (tussen ZO en ZW)<br>• Hellingshoek tussen 20° en 40°<br>• Zorg voor schaduwvrije installatie<br>• Kwalitatieve omvormer voor optimale efficiëntie",
-    resultsTitle: "Berekeningsresultaten", totalPower: "Totaal Vermogen", yearlyProduction: "Jaaropbrengst",
-    dailyProduction: "Dagopbrengst (gem.)", coverageRate: "Dekkingsgraad", ofConsumption: "van verbruik",
-    seasonalChart: "Seizoensopbrengst", monthlyChart: "Maandelijkse Opbrengst",
-    parameter: "Parameter", value: "Waarde", impact: "Impact op opbrengst",
-    panelType: "Paneeltype", inverterEff: "Omvormer efficiëntie", temperature: "Temperatuurverlies", systemLoss: "Totaal systeemverlies",
+    title: "Zonnepanelen Calculator",
+    subtitle: "Bereken exact het vermogen en de opbrengst van uw zonnepanelensysteem",
+    inputTitle: "Systeem Parameters",
+    panelCount: "Aantal panelen",
+    panelCountHint: "Typisch 8-16 voor een woonhuis",
+    panelPower: "Vermogen per paneel (Wp)",
+    panelPowerHint: "Moderne panelen: 350-550 Wp",
+    efficiency: "Systeemefficiëntie (%)",
+    efficiencyHint: "Beïnvloed door omvormer, oriëntatie & schaduw",
+    location: "Zoninstraling",
+    loc1: "Gemiddeld (Centraal)",
+    loc2: "Hoog (Zonnig)",
+    loc3: "Laag (Bewolkt)",
+    roofAngle: "Dakhelling & Richting",
+    roof1: "Ideaal (Zuid, 35°)",
+    roof2: "Goed (ZO/ZW, 25-45°)",
+    roof3: "Redelijk (O/W, 15-55°)",
+    roof4: "Suboptimaal (Noord/Plat)",
+    calculateBtn: "Bereken Opbrengst",
+    infoTitle: "Tips voor maximale opbrengst",
+    infoText: "• Zuidelijke oriëntatie (tussen Zuidoost en Zuidwest)<br>• Hellingshoek tussen 20° en 40°<br>• Zorg voor schaduwvrije installatie<br>• Kwalitatieve omvormer voor optimale efficiëntie",
+    resultsTitle: "Berekeningsresultaten",
+    totalPower: "Totaal Vermogen",
+    yearlyProduction: "Jaaropbrengst",
+    dailyProduction: "Dagopbrengst (gem.)",
+    coverageRate: "Dekkingsgraad",
+    ofConsumption: "van verbruik",
+    seasonalChart: "Seizoensopbrengst",
+    monthlyChart: "Maandelijkse Opbrengst",
+    parameter: "Parameter",
+    value: "Waarde",
+    impact: "Impact op opbrengst",
+    panelType: "Paneeltype",
+    inverterEff: "Omvormer efficiëntie",
+    temperature: "Temperatuurverlies",
+    systemLoss: "Totaal systeemverlies",
     footer1: "Deze calculator geeft een realistische schatting. Werkelijke opbrengst kan variëren door lokale omstandigheden.",
     footer2: "© 2026 GroenKlimaat | Voor professioneel advies raadpleeg een gecertificeerd installateur.",
-    privacyLink: "Privacybeleid",
-    termsLink: "Algemene Voorwaarden",
     months: ["Jan","Feb","Mrt","Apr","Mei","Jun","Jul","Aug","Sep","Okt","Nov","Dec"],
-    seasons: ["Winter","Lente","Zomer","Herfst"]
+    seasons: ["Winter","Lente","Zomer","Herfst"],
+    panelImpact15: "+15% t.o.v. poly",
+    panelImpact10: "+10% t.o.v. poly",
+    panelImpact0: "Standaard",
+    invHigh: "Hoog (±3% verlies)",
+    invVeryHigh: "Zeer hoog (±2% verlies)",
+    invAvg: "Gemiddeld (±5% verlies)",
+    tempAvg: "Gemiddeld (zomer)",
+    sysNorm: "Normaal voor installatie"
   },
   de: {
-    title: "Solarpanel Rechner", subtitle: "Berechnen Sie genau die Leistung und den Ertrag Ihres Solarpanelsystems",
-    inputTitle: "Systemparameter", panelCount: "Anzahl der Panels", panelCountHint: "Typisch 8-16 für ein Haus",
-    panelPower: "Leistung pro Panel (Wp)", panelPowerHint: "Moderne Panels: 350-550 Wp",
-    efficiency: "Systemeffizienz (%)", efficiencyHint: "Beeinflusst durch Wechselrichter, Ausrichtung & Beschattung",
-    location: "Region / Sonneneinstrahlung", loc1: "Niederlande/Belgien (Durchschnitt)", loc2: "Südeuropa (Hoch)", loc3: "Nordeuropa (Niedrig)",
-    roofAngle: "Dachneigung & Richtung", roof1: "Ideal (Süd, 35°)", roof2: "Gut (SO/SW, 25-45°)", roof3: "Mäßig (O/W, 15-55°)", roof4: "Suboptimal (Nord/Flach)",
-    calculateBtn: "Ertrag berechnen", infoTitle: "Tipps für maximalen Ertrag",
-    infoText: "• Südliche Ausrichtung (zwischen SO und SW)<br>• Neigungswinkel zwischen 20° und 40°<br>• Schattenfreie Installation sicherstellen<br>• Qualitätswechselrichter für optimale Effizienz",
-    resultsTitle: "Berechnungsergebnisse", totalPower: "Gesamtleistung", yearlyProduction: "Jahresertrag",
-    dailyProduction: "Tagesertrag (Durchs.)", coverageRate: "Abdeckungsgrad", ofConsumption: "des Verbrauchs",
-    seasonalChart: "Saisonaler Ertrag", monthlyChart: "Monatlicher Ertrag",
-    parameter: "Parameter", value: "Wert", impact: "Auswirkung auf Ertrag",
-    panelType: "Paneltyp", inverterEff: "Wechselrichterwirkungsgrad", temperature: "Temperaturverlust", systemLoss: "Gesamtsystemverlust",
+    title: "Solarpanel Rechner",
+    subtitle: "Berechnen Sie genau die Leistung und den Ertrag Ihres Solarpanelsystems",
+    inputTitle: "Systemparameter",
+    panelCount: "Anzahl der Panels",
+    panelCountHint: "Typisch 8-16 für ein Haus",
+    panelPower: "Leistung pro Panel (Wp)",
+    panelPowerHint: "Moderne Panels: 350-550 Wp",
+    efficiency: "Systemeffizienz (%)",
+    efficiencyHint: "Beeinflusst durch Wechselrichter, Ausrichtung & Beschattung",
+    location: "Sonneneinstrahlung",
+    loc1: "Durchschnittlich (Zentral)",
+    loc2: "Hoch (Sonnig)",
+    loc3: "Niedrig (Bewölkt)",
+    roofAngle: "Dachneigung & Richtung",
+    roof1: "Ideal (Süd, 35°)",
+    roof2: "Gut (SO/SW, 25-45°)",
+    roof3: "Mäßig (O/W, 15-55°)",
+    roof4: "Suboptimal (Nord/Flach)",
+    calculateBtn: "Ertrag berechnen",
+    infoTitle: "Tipps für maximalen Ertrag",
+    infoText: "• Südliche Ausrichtung (zwischen Südost und Südwest)<br>• Neigungswinkel zwischen 20° und 40°<br>• Schattenfreie Installation sicherstellen<br>• Qualitätswechselrichter für optimale Effizienz",
+    resultsTitle: "Berechnungsergebnisse",
+    totalPower: "Gesamtleistung",
+    yearlyProduction: "Jahresertrag",
+    dailyProduction: "Tagesertrag (Durchs.)",
+    coverageRate: "Abdeckungsgrad",
+    ofConsumption: "des Verbrauchs",
+    seasonalChart: "Saisonaler Ertrag",
+    monthlyChart: "Monatlicher Ertrag",
+    parameter: "Parameter",
+    value: "Wert",
+    impact: "Auswirkung auf Ertrag",
+    panelType: "Paneltyp",
+    inverterEff: "Wechselrichterwirkungsgrad",
+    temperature: "Temperaturverlust",
+    systemLoss: "Gesamtsystemverlust",
     footer1: "Dieser Rechner liefert eine realistische Schätzung. Der tatsächliche Ertrag kann aufgrund lokaler Bedingungen variieren.",
     footer2: "© 2026 GroenKlimaat | Für professionelle Beratung einen zertifizierten Installateur konsultieren.",
-    privacyLink: "Datenschutz",
-    termsLink: "AGB",
     months: ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"],
-    seasons: ["Winter","Frühling","Sommer","Herbst"]
+    seasons: ["Winter","Frühling","Sommer","Herbst"],
+    panelImpact15: "+15% vs. Poly",
+    panelImpact10: "+10% vs. Poly",
+    panelImpact0: "Standard",
+    invHigh: "Hoch (±3% Verlust)",
+    invVeryHigh: "Sehr hoch (±2% Verlust)",
+    invAvg: "Durchschnittlich (±5% Verlust)",
+    tempAvg: "Durchschnittlich (Sommer)",
+    sysNorm: "Normal für Installation"
   },
   fr: {
-    title: "Calculateur de Panneaux Solaires", subtitle: "Calculez exactement la puissance et le rendement de votre système",
-    inputTitle: "Paramètres du Système", panelCount: "Nombre de panneaux", panelCountHint: "Typiquement 8-16 pour une maison",
-    panelPower: "Puissance par panneau (Wc)", panelPowerHint: "Panneaux modernes: 350-550 Wc",
-    efficiency: "Efficacité système (%)", efficiencyHint: "Affectée par l'onduleur, l'orientation & l'ombrage",
-    location: "Région / Ensoleillement", loc1: "Pays-Bas/Belgique (Moyenne)", loc2: "Europe du Sud (Élevé)", loc3: "Europe du Nord (Faible)",
-    roofAngle: "Inclinaison & Orientation", roof1: "Idéal (Sud, 35°)", roof2: "Bon (SE/SO, 25-45°)", roof3: "Moyen (E/O, 15-55°)", roof4: "Suboptimal (Nord/Plat)",
-    calculateBtn: "Calculer le Rendement", infoTitle: "Conseils pour un rendement maximal",
-    infoText: "• Orientation sud (entre SE et SO)<br>• Angle d'inclinaison entre 20° et 40°<br>• Installation sans ombre<br>• Onduleur de qualité pour une efficacité optimale",
-    resultsTitle: "Résultats du Calcul", totalPower: "Puissance Totale", yearlyProduction: "Production Annuelle",
-    dailyProduction: "Production Quotidienne", coverageRate: "Taux de Couverture", ofConsumption: "de la consommation",
-    seasonalChart: "Rendement Saisonnier", monthlyChart: "Production Mensuelle",
-    parameter: "Paramètre", value: "Valeur", impact: "Impact sur le rendement",
-    panelType: "Type de panneau", inverterEff: "Efficacité de l'onduleur", temperature: "Perte de température", systemLoss: "Perte système totale",
+    title: "Calculateur de Panneaux Solaires",
+    subtitle: "Calculez exactement la puissance et le rendement de votre système de panneaux solaires",
+    inputTitle: "Paramètres du Système",
+    panelCount: "Nombre de panneaux",
+    panelCountHint: "Typiquement 8-16 pour une maison",
+    panelPower: "Puissance par panneau (Wc)",
+    panelPowerHint: "Panneaux modernes : 350-550 Wc",
+    efficiency: "Efficacité système (%)",
+    efficiencyHint: "Affectée par l'onduleur, l'orientation & l'ombrage",
+    location: "Ensoleillement",
+    loc1: "Moyen (Central)",
+    loc2: "Élevé (Ensoleillé)",
+    loc3: "Faible (Nuageux)",
+    roofAngle: "Inclinaison & Orientation du toit",
+    roof1: "Idéal (Sud, 35°)",
+    roof2: "Bon (SE/SO, 25-45°)",
+    roof3: "Moyen (E/O, 15-55°)",
+    roof4: "Suboptimal (Nord/Plat)",
+    calculateBtn: "Calculer le Rendement",
+    infoTitle: "Conseils pour un rendement maximal",
+    infoText: "• Orientation sud (entre sud-est et sud-ouest)<br>• Angle d'inclinaison entre 20° et 40°<br>• Installation sans ombre<br>• Onduleur de qualité pour une efficacité optimale",
+    resultsTitle: "Résultats du Calcul",
+    totalPower: "Puissance Totale",
+    yearlyProduction: "Production Annuelle",
+    dailyProduction: "Production Quotidienne (moy.)",
+    coverageRate: "Taux de Couverture",
+    ofConsumption: "de la consommation",
+    seasonalChart: "Rendement Saisonnier",
+    monthlyChart: "Production Mensuelle",
+    parameter: "Paramètre",
+    value: "Valeur",
+    impact: "Impact sur le rendement",
+    panelType: "Type de panneau",
+    inverterEff: "Efficacité de l'onduleur",
+    temperature: "Perte de température",
+    systemLoss: "Perte système totale",
     footer1: "Cette calculatrice fournit une estimation réaliste. Le rendement réel peut varier selon les conditions locales.",
     footer2: "© 2026 GroenKlimaat | Pour des conseils professionnels, consultez un installateur certifié.",
-    privacyLink: "Confidentialité",
-    termsLink: "Conditions d'utilisation",
     months: ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"],
-    seasons: ["Hiver","Printemps","Été","Automne"]
+    seasons: ["Hiver","Printemps","Été","Automne"],
+    panelImpact15: "+15% vs poly",
+    panelImpact10: "+10% vs poly",
+    panelImpact0: "Standard",
+    invHigh: "Élevé (±3% perte)",
+    invVeryHigh: "Très élevé (±2% perte)",
+    invAvg: "Moyen (±5% perte)",
+    tempAvg: "Moyen (été)",
+    sysNorm: "Normal pour l'installation"
   },
   es: {
-    title: "Calculadora de Paneles Solares", subtitle: "Calcule exactamente la potencia y el rendimiento de su sistema",
-    inputTitle: "Parámetros del Sistema", panelCount: "Número de paneles", panelCountHint: "Típicamente 8-16 para una casa",
-    panelPower: "Potencia por panel (Wp)", panelPowerHint: "Paneles modernos: 350-550 Wp",
-    efficiency: "Eficiencia del sistema (%)", efficiencyHint: "Afectada por el inversor, orientación y sombreado",
-    location: "Región / Irradiación solar", loc1: "Países Bajos/Bélgica (Promedio)", loc2: "Europa del Sur (Alto)", loc3: "Europa del Norte (Bajo)",
-    roofAngle: "Inclinación y Dirección", roof1: "Ideal (Sur, 35°)", roof2: "Bueno (SE/SO, 25-45°)", roof3: "Regular (E/O, 15-55°)", roof4: "Subóptimo (Norte/Plano)",
-    calculateBtn: "Calcular Rendimiento", infoTitle: "Consejos para máximo rendimiento",
-    infoText: "• Orientación sur (entre SE y SO)<br>• Ángulo de inclinación entre 20° y 40°<br>• Instalación libre de sombras<br>• Inversor de calidad para eficiencia óptima",
-    resultsTitle: "Resultados del Cálculo", totalPower: "Potencia Total", yearlyProduction: "Producción Anual",
-    dailyProduction: "Producción Diaria", coverageRate: "Tasa de Cobertura", ofConsumption: "del consumo",
-    seasonalChart: "Rendimiento Estacional", monthlyChart: "Producción Mensual",
-    parameter: "Parámetro", value: "Valor", impact: "Impacto en el rendimiento",
-    panelType: "Tipo de panel", inverterEff: "Eficiencia del inversor", temperature: "Pérdida por temperatura", systemLoss: "Pérdida total del sistema",
+    title: "Calculadora de Paneles Solares",
+    subtitle: "Calcule exactamente la potencia y el rendimiento de su sistema de paneles solares",
+    inputTitle: "Parámetros del Sistema",
+    panelCount: "Número de paneles",
+    panelCountHint: "Típicamente 8-16 para una casa",
+    panelPower: "Potencia por panel (Wp)",
+    panelPowerHint: "Paneles modernos: 350-550 Wp",
+    efficiency: "Eficiencia del sistema (%)",
+    efficiencyHint: "Afectada por el inversor, orientación y sombreado",
+    location: "Irradiación solar",
+    loc1: "Promedio (Central)",
+    loc2: "Alto (Soleado)",
+    loc3: "Bajo (Nublado)",
+    roofAngle: "Inclinación y Dirección del tejado",
+    roof1: "Ideal (Sur, 35°)",
+    roof2: "Bueno (SE/SO, 25-45°)",
+    roof3: "Regular (E/O, 15-55°)",
+    roof4: "Subóptimo (Norte/Plano)",
+    calculateBtn: "Calcular Rendimiento",
+    infoTitle: "Consejos para máximo rendimiento",
+    infoText: "• Orientación sur (entre sureste y suroeste)<br>• Ángulo de inclinación entre 20° y 40°<br>• Instalación libre de sombras<br>• Inversor de calidad para eficiencia óptima",
+    resultsTitle: "Resultados del Cálculo",
+    totalPower: "Potencia Total",
+    yearlyProduction: "Producción Anual",
+    dailyProduction: "Producción Diaria (prom.)",
+    coverageRate: "Tasa de Cobertura",
+    ofConsumption: "del consumo",
+    seasonalChart: "Rendimiento Estacional",
+    monthlyChart: "Producción Mensual",
+    parameter: "Parámetro",
+    value: "Valor",
+    impact: "Impacto en el rendimiento",
+    panelType: "Tipo de panel",
+    inverterEff: "Eficiencia del inversor",
+    temperature: "Pérdida por temperatura",
+    systemLoss: "Pérdida total del sistema",
     footer1: "Esta calculadora proporciona una estimación realista. El rendimiento real puede variar debido a condiciones locales.",
     footer2: "© 2026 GroenKlimaat | Para asesoramiento profesional consulte a un instalador certificado.",
-    privacyLink: "Privacidad",
-    termsLink: "Términos y condiciones",
     months: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-    seasons: ["Invierno","Primavera","Verano","Otoño"]
-  },
-  it: {
-    title: "Calcolatore Pannelli Solari", subtitle: "Calcola esattamente la potenza e la resa del tuo sistema",
-    inputTitle: "Parametri del Sistema", panelCount: "Numero di pannelli", panelCountHint: "Tipicamente 8-16 per una casa",
-    panelPower: "Potenza per pannello (Wp)", panelPowerHint: "Pannelli moderni: 350-550 Wp",
-    efficiency: "Efficienza sistema (%)", efficiencyHint: "Influenzata da inverter, orientamento & ombreggiamento",
-    location: "Regione / Irraggiamento", loc1: "Paesi Bassi/Belgio (Media)", loc2: "Europa del Sud (Alto)", loc3: "Europa del Nord (Basso)",
-    roofAngle: "Inclinazione & Direzione", roof1: "Ideale (Sud, 35°)", roof2: "Buono (SE/SO, 25-45°)", roof3: "Discreto (E/O, 15-55°)", roof4: "Subottimale (Nord/Piatto)",
-    calculateBtn: "Calcola Resa", infoTitle: "Consigli per resa massima",
-    infoText: "• Orientamento sud (tra SE e SO)<br>• Angolo d'inclinazione tra 20° e 40°<br>• Installazione senza ombre<br>• Inverter di qualità per efficienza ottimale",
-    resultsTitle: "Risultati Calcolo", totalPower: "Potenza Totale", yearlyProduction: "Produzione Annuale",
-    dailyProduction: "Produzione Giornaliera", coverageRate: "Tasso di Copertura", ofConsumption: "del consumo",
-    seasonalChart: "Resa Stagionale", monthlyChart: "Produzione Mensile",
-    parameter: "Parametro", value: "Valore", impact: "Impatto sulla resa",
-    panelType: "Tipo pannello", inverterEff: "Efficienza inverter", temperature: "Perdita temperatura", systemLoss: "Perdita sistema totale",
-    footer1: "Questo calcolatore fornisce una stima realistica. La resa effettiva può variare a causa delle condizioni locali.",
-    footer2: "© 2026 GroenKlimaat | Per consulenza professionale consulta un installatore certificato.",
-    privacyLink: "Privacy",
-    termsLink: "Termini e condizioni",
-    months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
-    seasons: ["Inverno","Primavera","Estate","Autunno"]
-  },
-  no: {
-    title: "Solcellepanel Kalkulator", subtitle: "Beregn nøyaktig effekten og avkastningen til systemet ditt",
-    inputTitle: "Systemparametere", panelCount: "Antall paneler", panelCountHint: "Vanligvis 8-16 for et hus",
-    panelPower: "Effekt per panel (Wp)", panelPowerHint: "Moderne paneler: 350-550 Wp",
-    efficiency: "Systemeffektivitet (%)", efficiencyHint: "Påvirket av inverter, orientering og skygge",
-    location: "Region / Solinnstråling", loc1: "Nederland/Belgia (Gjennomsnitt)", loc2: "Sør-Europa (Høy)", loc3: "Nord-Europa (Lav)",
-    roofAngle: "Takets helning & Retning", roof1: "Ideell (Sør, 35°)", roof2: "Bra (SØ/SV, 25-45°)", roof3: "Greit (Ø/V, 15-55°)", roof4: "Suboptimal (Nord/Flatt)",
-    calculateBtn: "Beregn Avkastning", infoTitle: "Tips for maksimal avkastning",
-    infoText: "• Sørlig orientering (mellom SØ og SV)<br>• Helningsvinkel mellom 20° og 40°<br>• Sørg for skyggefri installasjon<br>• Kvalitetsinverter for optimal effektivitet",
-    resultsTitle: "Beregningsresultater", totalPower: "Total Effekt", yearlyProduction: "Årlig Produksjon",
-    dailyProduction: "Daglig Produksjon", coverageRate: "Dekningsgrad", ofConsumption: "av forbruk",
-    seasonalChart: "Sesongavkastning", monthlyChart: "Månedlig Produksjon",
-    parameter: "Parameter", value: "Verdi", impact: "Innvirkning på avkastning",
-    panelType: "Paneltype", inverterEff: "Invertereffektivitet", temperature: "Temperaturtap", systemLoss: "Totalt systemtap",
-    footer1: "Denne kalkulatoren gir et realistisk estimat. Faktisk avkastning kan variere på grunn av lokale forhold.",
-    footer2: "© 2026 GroenKlimaat | For profesjonell rådgivning, kontakt en sertifisert installatør.",
-    privacyLink: "Personvern",
-    termsLink: "Vilkår",
-    months: ["Jan","Feb","Mar","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Des"],
-    seasons: ["Vinter","Vår","Sommer","Høst"]
-  },
-  pl: {
-    title: "Kalkulator Panel Słonecznych", subtitle: "Oblicz dokładnie moc i wydajność swojego systemu",
-    inputTitle: "Parametry Systemu", panelCount: "Liczba paneli", panelCountHint: "Zazwyczaj 8-16 dla domu",
-    panelPower: "Moc na panel (Wp)", panelPowerHint: "Nowoczesne panele: 350-550 Wp",
-    efficiency: "Wydajność systemu (%)", efficiencyHint: "Wpływ falownika, orientacji i zacienienia",
-    location: "Region / Nasłonecznienie", loc1: "Holandia/Belgia (Średnie)", loc2: "Europa Południowa (Wysokie)", loc3: "Europa Północna (Niskie)",
-    roofAngle: "Nachylenie i Kierunek", roof1: "Idealne (Południe, 35°)", roof2: "Dobre (PD-WS, 25-45°)", roof3: "Dostateczne (Wsch/Zach, 15-55°)", roof4: "Suboptymalne (Północ/Płaski)",
-    calculateBtn: "Oblicz Wydajność", infoTitle: "Wskazówki dla maksymalnej wydajności",
-    infoText: "• Orientacja południowa (między PD-WS)<br>• Kąt nachylenia między 20° a 40°<br>• Zapewnij instalację bez cienia<br>• Wysokiej jakości falownik",
-    resultsTitle: "Wyniki Obliczeń", totalPower: "Całkowita Moc", yearlyProduction: "Roczna Produkcja",
-    dailyProduction: "Dzienna Produkcja", coverageRate: "Wskaźnik Pokrycia", ofConsumption: "zużycia",
-    seasonalChart: "Wydajność Sezonowa", monthlyChart: "Produkcja Miesięczna",
-    parameter: "Parametr", value: "Wartość", impact: "Wpływ na wydajność",
-    panelType: "Typ panelu", inverterEff: "Wydajność falownika", temperature: "Strata temperaturowa", systemLoss: "Całkowita strata systemu",
-    footer1: "Ten kalkulator zapewnia realistyczne oszacowanie. Rzeczywista wydajność może się różnić w zależności od warunków lokalnych.",
-    footer2: "© 2026 GroenKlimaat | Aby uzyskać profesjonalną poradę, skontaktuj się z certyfikowanym instalatorem.",
-    privacyLink: "Polityka prywatności",
-    termsLink: "Regulamin",
-    months: ["Sty","Lut","Mar","Kwi","Maj","Cze","Lip","Sie","Wrz","Paź","Lis","Gru"],
-    seasons: ["Zima","Wiosna","Lato","Jesień"]
-  },
-  sv: {
-    title: "Solpanels Kalkylator", subtitle: "Beräkna exakt effekten och avkastningen för ditt system",
-    inputTitle: "Systemparametrar", panelCount: "Antal paneler", panelCountHint: "Vanligtvis 8-16 för ett hus",
-    panelPower: "Effekt per panel (Wp)", panelPowerHint: "Moderna paneler: 350-550 Wp",
-    efficiency: "Systemeffektivitet (%)", efficiencyHint: "Påverkas av växelriktare, orientering och skuggning",
-    location: "Region / Solinstrålning", loc1: "Nederländerna/Belgien (Genomsnitt)", loc2: "Södra Europa (Hög)", loc3: "Norra Europa (Låg)",
-    roofAngle: "Taklutning & Riktning", roof1: "Idealiskt (Söder, 35°)", roof2: "Bra (SO/SV, 25-45°)", roof3: "Okej (Ö/V, 15-55°)", roof4: "Suboptimalt (Norr/Platt)",
-    calculateBtn: "Beräkna Avkastning", infoTitle: "Tips för maximal avkastning",
-    infoText: "• Sydlig orientering (mellan SO och SV)<br>• Lutningsvinkel mellan 20° och 40°<br>• Säkerställ skuggfri installation<br>• Kvalitetsväxelriktare för optimal effektivitet",
-    resultsTitle: "Beräkningsresultat", totalPower: "Total Effekt", yearlyProduction: "Årlig Produktion",
-    dailyProduction: "Daglig Produktion", coverageRate: "Täckningsgrad", ofConsumption: "av förbrukning",
-    seasonalChart: "Säsongsavkastning", monthlyChart: "Månatlig Produktion",
-    parameter: "Parameter", value: "Värde", impact: "Påverkan på avkastning",
-    panelType: "Paneltyp", inverterEff: "Växelriktare effektivitet", temperature: "Temperaturförlust", systemLoss: "Total systemförlust",
-    footer1: "Denna kalkylator ger en realistisk uppskattning. Faktisk avkastning kan variera på grund av lokala förhållanden.",
-    footer2: "© 2026 GroenKlimaat | För professionell rådgivning, kontakta en certifierad installatör.",
-    privacyLink: "Integritetspolicy",
-    termsLink: "Villkor",
-    months: ["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec"],
-    seasons: ["Vinter","Vår","Sommar","Höst"]
+    seasons: ["Invierno","Primavera","Verano","Otoño"],
+    panelImpact15: "+15% vs poli",
+    panelImpact10: "+10% vs poli",
+    panelImpact0: "Estándar",
+    invHigh: "Alto (±3% pérdida)",
+    invVeryHigh: "Muy alto (±2% pérdida)",
+    invAvg: "Promedio (±5% pérdida)",
+    tempAvg: "Promedio (verano)",
+    sysNorm: "Normal para instalación"
   },
   pt: {
-    title: "Calculadora de Painéis Solares", subtitle: "Calcule exatamente a potência e o rendimento do seu sistema",
-    inputTitle: "Parâmetros do Sistema", panelCount: "Número de painéis", panelCountHint: "Tipicamente 8-16 para uma casa",
-    panelPower: "Potência por painel (Wp)", panelPowerHint: "Painéis modernos: 350-550 Wp",
-    efficiency: "Eficiência do sistema (%)", efficiencyHint: "Afetada pelo inversor, orientação e sombreamento",
-    location: "Região / Irradiação solar", loc1: "Países Baixos/Bélgica (Média)", loc2: "Sul da Europa (Alto)", loc3: "Norte da Europa (Baixo)",
-    roofAngle: "Inclinação e Direção", roof1: "Ideal (Sul, 35°)", roof2: "Bom (SE/SO, 25-45°)", roof3: "Razoável (L/O, 15-55°)", roof4: "Subótimo (Norte/Plano)",
-    calculateBtn: "Calcular Rendimento", infoTitle: "Dicas para rendimento máximo",
-    infoText: "• Orientação sul (entre SE e SO)<br>• Ângulo de inclinação entre 20° e 40°<br>• Garanta instalação sem sombras<br>• Inversor de qualidade para eficiência ideal",
-    resultsTitle: "Resultados do Cálculo", totalPower: "Potência Total", yearlyProduction: "Produção Anual",
-    dailyProduction: "Produção Diária", coverageRate: "Taxa de Cobertura", ofConsumption: "do consumo",
-    seasonalChart: "Rendimento Sazonal", monthlyChart: "Produção Mensal",
-    parameter: "Parâmetro", value: "Valor", impact: "Impacto no rendimento",
-    panelType: "Tipo de painel", inverterEff: "Eficiência do inversor", temperature: "Perda de temperatura", systemLoss: "Perda total do sistema",
+    title: "Calculadora de Painéis Solares",
+    subtitle: "Calcule exatamente a potência e o rendimento do seu sistema de painéis solares",
+    inputTitle: "Parâmetros do Sistema",
+    panelCount: "Número de painéis",
+    panelCountHint: "Tipicamente 8-16 para uma casa",
+    panelPower: "Potência por painel (Wp)",
+    panelPowerHint: "Painéis modernos: 350-550 Wp",
+    efficiency: "Eficiência do sistema (%)",
+    efficiencyHint: "Afetada pelo inversor, orientação e sombreamento",
+    location: "Irradiação solar",
+    loc1: "Média (Central)",
+    loc2: "Alta (Soleado)",
+    loc3: "Baixa (Nublado)",
+    roofAngle: "Inclinação e Direção do telhado",
+    roof1: "Ideal (Sul, 35°)",
+    roof2: "Bom (SE/SO, 25-45°)",
+    roof3: "Razoável (L/O, 15-55°)",
+    roof4: "Subótimo (Norte/Plano)",
+    calculateBtn: "Calcular Rendimento",
+    infoTitle: "Dicas para rendimento máximo",
+    infoText: "• Orientação sul (entre sudeste e sudoeste)<br>• Ângulo de inclinação entre 20° e 40°<br>• Garanta instalação sem sombras<br>• Inversor de qualidade para eficiência ideal",
+    resultsTitle: "Resultados do Cálculo",
+    totalPower: "Potência Total",
+    yearlyProduction: "Produção Anual",
+    dailyProduction: "Produção Diária (méd.)",
+    coverageRate: "Taxa de Cobertura",
+    ofConsumption: "do consumo",
+    seasonalChart: "Rendimento Sazonal",
+    monthlyChart: "Produção Mensal",
+    parameter: "Parâmetro",
+    value: "Valor",
+    impact: "Impacto no rendimento",
+    panelType: "Tipo de painel",
+    inverterEff: "Eficiência do inversor",
+    temperature: "Perda de temperatura",
+    systemLoss: "Perda total do sistema",
     footer1: "Esta calculadora fornece uma estimativa realista. O rendimento real pode variar devido às condições locais.",
     footer2: "© 2026 GroenKlimaat | Para aconselhamento profissional, consulte um instalador certificado.",
-    privacyLink: "Privacidade",
-    termsLink: "Termos e condições",
     months: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
-    seasons: ["Inverno","Primavera","Verão","Outono"]
+    seasons: ["Inverno","Primavera","Verão","Outono"],
+    panelImpact15: "+15% vs poli",
+    panelImpact10: "+10% vs poli",
+    panelImpact0: "Padrão",
+    invHigh: "Alto (±3% perda)",
+    invVeryHigh: "Muito alto (±2% perda)",
+    invAvg: "Médio (±5% perda)",
+    tempAvg: "Médio (verão)",
+    sysNorm: "Normal para instalação"
   },
-  la: {
-    title: "Calculator Panellorum Solarium", subtitle: "Computa accurate potentiam et proventum systematis tui",
-    inputTitle: "Parametri Systematis", panelCount: "Numerus panellorum", panelCountHint: "Fere 8-16 pro domo",
-    panelPower: "Potentia per panellum (Wp)", panelPowerHint: "Panelli moderni: 350-550 Wp",
-    efficiency: "Efficientia systematis (%)", efficiencyHint: "Affecta ab inversore, orientatione et umbra",
-    location: "Regio / Irradiatio", loc1: "Nederlandia/Belgia (Medium)", loc2: "Europa Australis (Altum)", loc3: "Europa Septentrionalis (Humile)",
-    roofAngle: "Inclinatio et Directio", roof1: "Ideale (Meridies, 35°)", roof2: "Bonum (SE/SO, 25-45°)", roof3: "Satis (Oriens/Occidens, 15-55°)", roof4: "Suboptimum (Septentrio/Planum)",
-    calculateBtn: "Computa Proventum", infoTitle: "Consilia pro maximo proventu",
-    infoText: "• Orientatio meridionalis (inter SE et SO)<br>• Angulus inclinationis inter 20° et 40°<br>• Cura ut installatio sine umbra sit<br>• Inversor qualitatis pro efficientia optima",
-    resultsTitle: "Resultata Computationis", totalPower: "Potentia Totalis", yearlyProduction: "Productio Annua",
-    dailyProduction: "Productio Quotidiana", coverageRate: "Ratio Tegumenti", ofConsumption: "consumptionis",
-    seasonalChart: "Proventus Temporalis", monthlyChart: "Productio Menstrua",
-    parameter: "Parametrum", value: "Valor", impact: "Impactus in proventum",
-    panelType: "Typus panelli", inverterEff: "Efficientia inversoris", temperature: "Damnum temperaturae", systemLoss: "Damnum systematis totale",
-    footer1: "Hic calculator aestimationem realisticam praebet. Proventus verus variare potest propter condiciones locales.",
-    footer2: "© 2026 GroenKlimaat | Pro consilio professionali, consule installatorem certificatum.",
-    privacyLink: "Secretum",
-    termsLink: "Termini",
-    months: ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Nov","Dec"],
-    seasons: ["Hiems","Ver","Aestas","Autumnus"]
-  },
-  zh: {
-    title: "太阳能板计算器", subtitle: "精确计算您的太阳能板系统的功率和发电量",
-    inputTitle: "系统参数", panelCount: "电池板数量", panelCountHint: "通常房屋需要 8-16 块",
-    panelPower: "每块电池板功率 (峰瓦)", panelPowerHint: "现代电池板：350-550 峰瓦",
-    efficiency: "系统效率 (%)", efficiencyHint: "受逆变器、方向和阴影影响",
-    location: "地区 / 太阳辐射", loc1: "荷兰/比利时 (平均)", loc2: "南欧 (高)", loc3: "北欧 (低)",
-    roofAngle: "屋顶倾角和方向", roof1: "理想 (朝南, 35°)", roof2: "良好 (东南/西南, 25-45°)", roof3: "一般 (东/西, 15-55°)", roof4: "不理想 (朝北/平顶)",
-    calculateBtn: "计算发电量", infoTitle: "最大发电量提示",
-    infoText: "• 朝南方向 (东南和西南之间)<br>• 倾斜角在 20° 至 40° 之间<br>• 确保无阴影安装<br>• 优质逆变器以获得最佳效率",
-    resultsTitle: "计算结果", totalPower: "总功率", yearlyProduction: "年发电量",
-    dailyProduction: "日发电量 (平均)", coverageRate: "覆盖率", ofConsumption: "的消耗量",
-    seasonalChart: "季节性发电量", monthlyChart: "月发电量",
-    parameter: "参数", value: "数值", impact: "对发电量的影响",
-    panelType: "电池板类型", inverterEff: "逆变器效率", temperature: "温度损失", systemLoss: "系统总损失",
-    footer1: "此计算器提供现实估算。实际发电量可能因当地条件而异。",
-    footer2: "© 2026 GroenKlimaat | 专业建议请咨询认证安装人员。",
-    privacyLink: "隐私政策",
-    termsLink: "条款和条件",
-    months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
-    seasons: ["冬季","春季","夏季","秋季"]
+  sv: {
+    title: "Solpanels Kalkylator",
+    subtitle: "Beräkna exakt effekten och avkastningen för ditt solpanelssystem",
+    inputTitle: "Systemparametrar",
+    panelCount: "Antal paneler",
+    panelCountHint: "Vanligtvis 8-16 för ett hus",
+    panelPower: "Effekt per panel (Wp)",
+    panelPowerHint: "Moderna paneler: 350-550 Wp",
+    efficiency: "Systemeffektivitet (%)",
+    efficiencyHint: "Påverkas av växelriktare, orientering och skuggning",
+    location: "Solinstrålning",
+    loc1: "Genomsnittlig (Central)",
+    loc2: "Hög (Soligt)",
+    loc3: "Låg (Mulet)",
+    roofAngle: "Taklutning & Riktning",
+    roof1: "Idealiskt (Söder, 35°)",
+    roof2: "Bra (SO/SV, 25-45°)",
+    roof3: "Okej (Ö/V, 15-55°)",
+    roof4: "Suboptimalt (Norr/Platt)",
+    calculateBtn: "Beräkna Avkastning",
+    infoTitle: "Tips för maximal avkastning",
+    infoText: "• Sydlig orientering (mellan sydost och sydväst)<br>• Lutningsvinkel mellan 20° och 40°<br>• Säkerställ skuggfri installation<br>• Kvalitetsväxelriktare för optimal effektivitet",
+    resultsTitle: "Beräkningsresultat",
+    totalPower: "Total Effekt",
+    yearlyProduction: "Årlig Produktion",
+    dailyProduction: "Daglig Produktion (gen.)",
+    coverageRate: "Täckningsgrad",
+    ofConsumption: "av förbrukning",
+    seasonalChart: "Säsongsavkastning",
+    monthlyChart: "Månatlig Produktion",
+    parameter: "Parameter",
+    value: "Värde",
+    impact: "Påverkan på avkastning",
+    panelType: "Paneltyp",
+    inverterEff: "Växelriktare effektivitet",
+    temperature: "Temperaturförlust",
+    systemLoss: "Total systemförlust",
+    footer1: "Denna kalkylator ger en realistisk uppskattning. Faktisk avkastning kan variera på grund av lokala förhållanden.",
+    footer2: "© 2026 GroenKlimaat | För professionell rådgivning, kontakta en certifierad installatör.",
+    months: ["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec"],
+    seasons: ["Vinter","Vår","Sommar","Höst"],
+    panelImpact15: "+15% vs poly",
+    panelImpact10: "+10% vs poly",
+    panelImpact0: "Standard",
+    invHigh: "Hög (±3% förlust)",
+    invVeryHigh: "Mycket hög (±2% förlust)",
+    invAvg: "Genomsnittlig (±5% förlust)",
+    tempAvg: "Genomsnittlig (sommar)",
+    sysNorm: "Normal för installation"
   },
   ja: {
-    title: "太陽光パネル計算機", subtitle: "太陽光パネルシステムの電力と発電量を正確に計算",
-    inputTitle: "システムパラメータ", panelCount: "パネル数", panelCountHint: "一般的な家屋：8-16 枚",
-    panelPower: "パネルあたりの電力 (峰ワット)", panelPowerHint: "現代パネル：350-550 峰ワット",
-    efficiency: "システム効率 (%)", efficiencyHint: "インバーター、方位、影の影響を受けます",
-    location: "地域 / 日射量", loc1: "オランダ/ベルギー (平均)", loc2: "南ヨーロッパ (高い)", loc3: "北ヨーロッパ (低い)",
-    roofAngle: "屋根の傾斜と方角", roof1: "理想的 (南向き, 35°)", roof2: "良好 (南東/南西, 25-45°)", roof3: "普通 (東/西, 15-55°)", roof4: "最適でない (北向き/平ら)",
-    calculateBtn: "発電量を計算", infoTitle: "最大発電量のためのヒント",
-    infoText: "• 南向き (南東と南西の間)<br>• 傾斜角 20°〜40°<br>• 影のない設置を確保<br>• 最適な効率のための高品質インバーター",
-    resultsTitle: "計算結果", totalPower: "総電力", yearlyProduction: "年間発電量",
-    dailyProduction: "日次発電量 (平均)", coverageRate: "カバレッジ率", ofConsumption: "消費量の",
-    seasonalChart: "季節別発電量", monthlyChart: "月次発電量",
-    parameter: "パラメータ", value: "値", impact: "発電量への影響",
-    panelType: "パネルタイプ", inverterEff: "インバーター効率", temperature: "温度損失", systemLoss: "総システム損失",
+    title: "太陽光パネル計算機",
+    subtitle: "太陽光パネルシステムの電力と発電量を正確に計算",
+    inputTitle: "システムパラメータ",
+    panelCount: "パネル数",
+    panelCountHint: "一般的な家屋：8-16 枚",
+    panelPower: "パネルあたりの電力 (峰ワット)",
+    panelPowerHint: "現代パネル：350-550 峰ワット",
+    efficiency: "システム効率 (%)",
+    efficiencyHint: "インバーター、方位、影の影響を受けます",
+    location: "日射量",
+    loc1: "平均 (中央)",
+    loc2: "高い (晴天)",
+    loc3: "低い (曇天)",
+    roofAngle: "屋根の傾斜と方角",
+    roof1: "理想的 (南向き, 35°)",
+    roof2: "良好 (南東/南西, 25-45°)",
+    roof3: "普通 (東/西, 15-55°)",
+    roof4: "最適でない (北向き/平ら)",
+    calculateBtn: "発電量を計算",
+    infoTitle: "最大発電量のためのヒント",
+    infoText: "• 南向き（南東と南西の間）<br>• 傾斜角 20°〜40°<br>• 影のない設置を確保<br>• 最適な効率のための高品質インバーター",
+    resultsTitle: "計算結果",
+    totalPower: "総電力",
+    yearlyProduction: "年間発電量",
+    dailyProduction: "日次発電量（平均）",
+    coverageRate: "カバレッジ率",
+    ofConsumption: "消費量の",
+    seasonalChart: "季節別発電量",
+    monthlyChart: "月次発電量",
+    parameter: "パラメータ",
+    value: "値",
+    impact: "発電量への影響",
+    panelType: "パネルタイプ",
+    inverterEff: "インバーター効率",
+    temperature: "温度損失",
+    systemLoss: "総システム損失",
     footer1: "この計算機は現実的な推定値を提供します。実際の発電量は現地の条件により異なる場合があります。",
     footer2: "© 2026 GroenKlimaat | 専門的なアドバイスについては認定設置業者にご相談ください。",
-    privacyLink: "プライバシーポリシー",
-    termsLink: "利用規約",
     months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
-    seasons: ["冬","春","夏","秋"]
+    seasons: ["冬","春","夏","秋"],
+    panelImpact15: "+15% (多結晶比)",
+    panelImpact10: "+10% (多結晶比)",
+    panelImpact0: "標準",
+    invHigh: "高い (±3% 損失)",
+    invVeryHigh: "非常に高い (±2% 損失)",
+    invAvg: "平均 (±5% 損失)",
+    tempAvg: "平均 (夏)",
+    sysNorm: "設置に対して標準"
   },
-  uk: {
-    title: "Калькулятор сонячних панелей", subtitle: "Точно розрахуйте потужність і виробіток вашої сонячної системи",
-    inputTitle: "Параметри системи", panelCount: "Кількість панелей", panelCountHint: "Зазвичай 8-16 для будинку",
-    panelPower: "Потужність на панель (Вт)", panelPowerHint: "Сучасні панелі: 350-550 Вт",
-    efficiency: "Ефективність системи (%)", efficiencyHint: "Залежить від інвертора, орієнтації та затінення",
-    location: "Регіон / Сонячна радіація", loc1: "Нідерланди/Бельгія (Середня)", loc2: "Південна Європа (Висока)", loc3: "Північна Європа (Низька)",
-    roofAngle: "Нахил даху та напрямок", roof1: "Ідеально (Південь, 35°)", roof2: "Добре (ПдСх/ПдЗх, 25-45°)", roof3: "Задовільно (Сх/Зх, 15-55°)", roof4: "Неоптимально (Північ/Плоский)",
-    calculateBtn: "Розрахувати виробіток", infoTitle: "Поради для максимального виробітку",
-    infoText: "• Південна орієнтація (між ПдСх та ПдЗх)<br>• Кут нахилу між 20° та 40°<br>• Забезпечте встановлення без тіні<br>• Якісний інвертор для оптимальної ефективності",
-    resultsTitle: "Результати розрахунку", totalPower: "Загальна потужність", yearlyProduction: "Річний виробіток",
-    dailyProduction: "Добовий виробіток (сер.)", coverageRate: "Рівень покриття", ofConsumption: "від споживання",
-    seasonalChart: "Сезонний виробіток", monthlyChart: "Місячний виробіток",
-    parameter: "Параметр", value: "Значення", impact: "Вплив на виробіток",
-    panelType: "Тип панелі", inverterEff: "Ефективність інвертора", temperature: "Втрати на температуру", systemLoss: "Загальні втрати системи",
-    footer1: "Цей калькулятор дає реалістичну оцінку. Фактичний виробіток може відрізнятися залежно від місцевих умов.",
-    footer2: "© 2026 GroenKlimaat | Для професійної консультації зверніться до сертифікованого монтажника.",
-    privacyLink: "Політика конфіденційності",
-    termsLink: "Умови використання",
-    months: ["Січ","Лют","Бер","Кві","Тра","Чер","Лип","Сер","Вер","Жов","Лис","Гру"],
-    seasons: ["Зима","Весна","Літо","Осінь"]
+  zh: {
+    title: "太阳能板计算器",
+    subtitle: "精确计算您的太阳能板系统的功率和发电量",
+    inputTitle: "系统参数",
+    panelCount: "电池板数量",
+    panelCountHint: "通常房屋需要 8-16 块",
+    panelPower: "每块电池板功率 (峰瓦)",
+    panelPowerHint: "现代电池板：350-550 峰瓦",
+    efficiency: "系统效率 (%)",
+    efficiencyHint: "受逆变器、方向和阴影影响",
+    location: "太阳辐射",
+    loc1: "平均 (中部)",
+    loc2: "高 (晴天)",
+    loc3: "低 (多云)",
+    roofAngle: "屋顶倾角和方向",
+    roof1: "理想 (朝南, 35°)",
+    roof2: "良好 (东南/西南, 25-45°)",
+    roof3: "一般 (东/西, 15-55°)",
+    roof4: "不理想 (朝北/平顶)",
+    calculateBtn: "计算发电量",
+    infoTitle: "最大发电量提示",
+    infoText: "• 朝南方向 (东南和西南之间)<br>• 倾斜角在 20° 至 40° 之间<br>• 确保无阴影安装<br>• 优质逆变器以获得最佳效率",
+    resultsTitle: "计算结果",
+    totalPower: "总功率",
+    yearlyProduction: "年发电量",
+    dailyProduction: "日发电量 (平均)",
+    coverageRate: "覆盖率",
+    ofConsumption: "的消耗量",
+    seasonalChart: "季节性发电量",
+    monthlyChart: "月发电量",
+    parameter: "参数",
+    value: "数值",
+    impact: "对发电量的影响",
+    panelType: "电池板类型",
+    inverterEff: "逆变器效率",
+    temperature: "温度损失",
+    systemLoss: "系统总损失",
+    footer1: "此计算器提供现实估算。实际发电量可能因当地条件而异。",
+    footer2: "© 2026 GroenKlimaat | 专业建议请咨询认证安装人员。",
+    months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+    seasons: ["冬季","春季","夏季","秋季"],
+    panelImpact15: "+15% (对比多晶)",
+    panelImpact10: "+10% (对比多晶)",
+    panelImpact0: "标准",
+    invHigh: "高 (±3% 损失)",
+    invVeryHigh: "非常高 (±2% 损失)",
+    invAvg: "平均 (±5% 损失)",
+    tempAvg: "平均 (夏季)",
+    sysNorm: "安装正常"
+  },
+  la: {
+    title: "Calculator Panellorum Solarium",
+    subtitle: "Computa accurate potentiam et proventum systematis panellorum solarium tuorum",
+    inputTitle: "Parametri Systematis",
+    panelCount: "Numerus panellorum",
+    panelCountHint: "Fere 8-16 pro domo",
+    panelPower: "Potentia per panellum (Wp)",
+    panelPowerHint: "Panelli moderni: 350-550 Wp",
+    efficiency: "Efficientia systematis (%)",
+    efficiencyHint: "Affecta ab inversore, orientatione et umbra",
+    location: "Irradiatio solaris",
+    loc1: "Medium (Centrale)",
+    loc2: "Altum (Serenum)",
+    loc3: "Humile (Nubilum)",
+    roofAngle: "Inclinatio et Directio tecti",
+    roof1: "Ideale (Meridies, 35°)",
+    roof2: "Bonum (SE/SO, 25-45°)",
+    roof3: "Satis (Oriens/Occidens, 15-55°)",
+    roof4: "Suboptimum (Septentrio/Planum)",
+    calculateBtn: "Computa Proventum",
+    infoTitle: "Consilia pro maximo proventu",
+    infoText: "• Orientatio meridionalis (inter meridiem et occasum)<br>• Angulus inclinationis inter 20° et 40°<br>• Cura ut installatio sine umbra sit<br>• Inversor qualitatis pro efficientia optima",
+    resultsTitle: "Resultata Computationis",
+    totalPower: "Potentia Totalis",
+    yearlyProduction: "Productio Annua",
+    dailyProduction: "Productio Quotidiana (med.)",
+    coverageRate: "Ratio Tegumenti",
+    ofConsumption: "consumptionis",
+    seasonalChart: "Proventus Temporalis",
+    monthlyChart: "Productio Menstrua",
+    parameter: "Parametrum",
+    value: "Valor",
+    impact: "Impactus in proventum",
+    panelType: "Typus panelli",
+    inverterEff: "Efficientia inversoris",
+    temperature: "Damnum temperaturae",
+    systemLoss: "Damnum systematis totale",
+    footer1: "Hic calculator aestimationem realisticam praebet. Proventus verus variare potest propter condiciones locales.",
+    footer2: "© 2026 GroenKlimaat | Pro consilio professionali, consule installatorem certificatum.",
+    months: ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Nov","Dec"],
+    seasons: ["Hiems","Ver","Aestas","Autumnus"],
+    panelImpact15: "+15% vs poly",
+    panelImpact10: "+10% vs poly",
+    panelImpact0: "Standard",
+    invHigh: "Altum (±3% damnum)",
+    invVeryHigh: "Altissimum (±2% damnum)",
+    invAvg: "Medium (±5% damnum)",
+    tempAvg: "Medium (aestas)",
+    sysNorm: "Normale pro installatione"
   }
 };
 
+/* ============================================================
+   STATE
+   ============================================================ */
 let currentLanguage = 'en';
 let seasonChart = null;
 let monthlyChart = null;
 
+/* ============================================================
+   LANGUAGE HANDLING
+   ============================================================ */
 function changeLanguage(lang) {
+  if (!translations[lang]) return;
   currentLanguage = lang;
+
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
   });
+
   translatePage();
+
   if (document.getElementById('calculateBtn').hasAttribute('data-calculated')) {
     calculateResults();
   }
 }
 
 function translatePage() {
+  const dict = translations[currentLanguage] || translations.en;
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.getAttribute('data-i18n');
-    if (translations[currentLanguage] && translations[currentLanguage][key]) {
-      const text = translations[currentLanguage][key];
-      if (text.indexOf('<br>') !== -1 || text.indexOf('<b>') !== -1 || text.indexOf('<i>') !== -1) {
-        element.innerHTML = text;
+    if (dict[key]) {
+      if (key === 'infoText') {
+        element.innerHTML = dict[key];
       } else {
-        element.textContent = text;
+        element.textContent = dict[key];
       }
     }
   });
-  document.title = translations[currentLanguage]['title'];
+  document.title = dict['title'] || 'Solar Panel Calculator';
 }
 
+/* ============================================================
+   CALCULATION
+   ============================================================ */
 function calculateResults() {
-  const panelCount = parseInt(document.getElementById('panelCount').value) || 12;
-  const panelPower = parseInt(document.getElementById('panelPower').value) || 400;
-  const efficiency = parseInt(document.getElementById('efficiency').value) || 85;
-  const locationFactor = parseFloat(document.getElementById('location').value) || 1.05;
-  const roofFactor = parseFloat(document.getElementById('roofAngle').value) || 1.0;
+  const panelCount    = parseInt(document.getElementById('panelCount').value) || 12;
+  const panelPower    = parseInt(document.getElementById('panelPower').value) || 400;
+  const efficiency    = parseInt(document.getElementById('efficiency').value) || 85;
+  const locationFactor= parseFloat(document.getElementById('location').value) || 1.05;
+  const roofFactor    = parseFloat(document.getElementById('roofAngle').value) || 1.0;
 
   document.getElementById('efficiencyValue').textContent = efficiency + '%';
 
-  const totalPowerWp = panelCount * panelPower;
-  const totalPowerKw = totalPowerWp / 1000;
+  const totalPowerWp  = panelCount * panelPower;
+  const totalPowerKw  = totalPowerWp / 1000;
   const baseProduction = totalPowerKw * 1000;
   const annualProduction = Math.round(baseProduction * locationFactor * roofFactor * (efficiency / 100));
   const dailyProduction = (annualProduction / 365).toFixed(1);
   const averageConsumption = 3500;
   const coverageRate = Math.round((annualProduction / averageConsumption) * 100);
 
-  document.getElementById('totalPower').textContent = totalPowerKw.toFixed(1);
+  document.getElementById('totalPower').textContent       = totalPowerKw.toFixed(1);
   document.getElementById('yearlyProduction').textContent = annualProduction.toLocaleString('en-US');
-  document.getElementById('dailyProduction').textContent = dailyProduction;
-  document.getElementById('coverageRate').textContent = coverageRate + '%';
+  document.getElementById('dailyProduction').textContent  = dailyProduction;
+  document.getElementById('coverageRate').textContent     = coverageRate + '%';
 
   updateComparisonTable(panelPower, efficiency);
   generateCharts(annualProduction);
@@ -740,36 +1049,40 @@ function calculateResults() {
 }
 
 function updateComparisonTable(panelPower, efficiency) {
-  let panelType = "Polycrystalline";
-  let panelImpact = "+0%";
-  if (panelPower >= 450) { panelType = "Monocrystalline"; panelImpact = "+15%"; }
-  else if (panelPower >= 400) { panelType = "PERC Mono"; panelImpact = "+10%"; }
+  const t = translations[currentLanguage] || translations.en;
 
-  let inverterEff = "96%";
-  let inverterImpact = "High";
-  if (efficiency >= 90) { inverterEff = "98%"; inverterImpact = "Very high"; }
-  else if (efficiency <= 80) { inverterEff = "94%"; inverterImpact = "Average"; }
+  let panelType   = "Polycrystalline";
+  let panelImpact = t.panelImpact0;
+  if (panelPower >= 450) { panelType = "Monocrystalline"; panelImpact = t.panelImpact15; }
+  else if (panelPower >= 400) { panelType = "PERC Mono"; panelImpact = t.panelImpact10; }
 
-  document.getElementById('panelTypeValue').textContent = panelType;
-  document.getElementById('panelTypeImpact').textContent = panelImpact;
+  let inverterEff    = "96%";
+  let inverterImpact = t.invHigh;
+  if (efficiency >= 90)      { inverterEff = "98%"; inverterImpact = t.invVeryHigh; }
+  else if (efficiency <= 80) { inverterEff = "94%"; inverterImpact = t.invAvg; }
+
+  document.getElementById('panelTypeValue').textContent   = panelType;
+  document.getElementById('panelTypeImpact').textContent  = panelImpact;
   document.getElementById('inverterEffValue').textContent = inverterEff;
-  document.getElementById('inverterEffImpact').textContent = inverterImpact;
+  document.getElementById('inverterEffImpact').textContent= inverterImpact;
   document.getElementById('temperatureValue').textContent = "-8%";
-  document.getElementById('temperatureImpact').textContent = "Average";
-  document.getElementById('systemLossValue').textContent = (100 - efficiency) + "%";
-  document.getElementById('systemLossImpact').textContent = "Normal";
+  document.getElementById('temperatureImpact').textContent= t.tempAvg;
+  document.getElementById('systemLossValue').textContent  = (100 - efficiency) + "%";
+  document.getElementById('systemLossImpact').textContent = t.sysNorm;
 }
 
 function generateCharts(annualProduction) {
-  const months = translations[currentLanguage].months;
-  const seasons = translations[currentLanguage].seasons;
+  const dict   = translations[currentLanguage] || translations.en;
+  const months = dict.months;
+  const seasons= dict.seasons;
 
-  const monthlyDistribution = [0.05,0.06,0.09,0.12,0.15,0.16,0.16,0.13,0.09,0.05,0.03,0.02];
-  const monthlyData = monthlyDistribution.map(v => Math.round(v * annualProduction));
+  const monthlyDistribution  = [0.05,0.06,0.09,0.12,0.15,0.16,0.16,0.13,0.09,0.05,0.03,0.02];
   const seasonalDistribution = [0.11,0.36,0.44,0.09];
+
+  const monthlyData  = monthlyDistribution.map(v => Math.round(v * annualProduction));
   const seasonalData = seasonalDistribution.map(v => Math.round(v * annualProduction));
 
-  if (seasonChart) seasonChart.destroy();
+  if (seasonChart)  seasonChart.destroy();
   if (monthlyChart) monthlyChart.destroy();
 
   const seasonCtx = document.getElementById('seasonChart').getContext('2d');
@@ -786,16 +1099,27 @@ function generateCharts(annualProduction) {
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '60%',
       plugins: {
-        legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '500' }, color: '#64748B' } },
-        tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8,
-          callbacks: { label: function(ctx) {
-            const v = ctx.raw || 0;
-            const p = Math.round((v / annualProduction) * 100);
-            return ` ${v.toLocaleString('en-US')} kWh (${p}%)`;
-          }}
+        legend: {
+          position: 'right',
+          labels: {
+            padding: 16, usePointStyle: true, pointStyle: 'circle',
+            font: { size: 12, weight: '500' }, color: '#64748B'
+          }
         },
-        datalabels: { color: '#fff', font: { weight: 'bold', size: 11 },
-          formatter: (v) => Math.round((v / annualProduction) * 100) + '%' }
+        tooltip: {
+          backgroundColor: '#0F172A', padding: 12, cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              const value = context.raw || 0;
+              const percentage = Math.round((value / annualProduction) * 100);
+              return ` ${value.toLocaleString('en-US')} kWh (${percentage}%)`;
+            }
+          }
+        },
+        datalabels: {
+          color: '#fff', font: { weight: 'bold', size: 11 },
+          formatter: (value) => Math.round((value / annualProduction) * 100) + '%'
+        }
       }
     },
     plugins: [ChartDataLabels]
@@ -807,7 +1131,8 @@ function generateCharts(annualProduction) {
     data: {
       labels: months,
       datasets: [{
-        label: 'kWh', data: monthlyData,
+        label: 'kWh',
+        data: monthlyData,
         backgroundColor: 'rgba(16, 185, 129, 0.8)',
         hoverBackgroundColor: 'rgba(16, 185, 129, 1)',
         borderWidth: 0, borderRadius: 6, borderSkipped: false
@@ -817,28 +1142,41 @@ function generateCharts(annualProduction) {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8,
-          callbacks: { label: function(ctx) { return ` ${ctx.raw.toLocaleString('en-US')} kWh`; } }
+        tooltip: {
+          backgroundColor: '#0F172A', padding: 12, cornerRadius: 8,
+          callbacks: {
+            label: function(context) { return ` ${context.raw.toLocaleString('en-US')} kWh`; }
+          }
         }
       },
       scales: {
-        y: { beginAtZero: true, grid: { color: '#F1F5F9', drawBorder: false },
-          ticks: { color: '#94A3B8', font: { size: 11 }, callback: function(v) { return v.toLocaleString('en-US'); } } },
+        y: {
+          beginAtZero: true, grid: { color: '#F1F5F9', drawBorder: false },
+          ticks: {
+            color: '#94A3B8', font: { size: 11 },
+            callback: function(value) { return value.toLocaleString('en-US'); }
+          }
+        },
         x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 11 } } }
       }
     }
   });
 }
 
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', function() { changeLanguage(this.getAttribute('data-lang')); });
+    btn.addEventListener('click', function() {
+      changeLanguage(this.getAttribute('data-lang'));
+    });
   });
 
   document.getElementById('calculateBtn').addEventListener('click', calculateResults);
 
   const efficiencySlider = document.getElementById('efficiency');
-  const efficiencyValue = document.getElementById('efficiencyValue');
+  const efficiencyValue  = document.getElementById('efficiencyValue');
   efficiencySlider.addEventListener('input', function() {
     efficiencyValue.textContent = this.value + '%';
   });
