@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar Panel Calculator | GroenKlimaat</title>
 
-<!-- PWA Meta -->
-<meta name="description" content="🌞 Calculate the exact power and yield of your solar panel system. 14 languages, works offline.">
+<meta name="description" content="🌞 Calculate the exact power, yield and CO₂ savings of your solar panel system. 14 languages, works offline.">
 <meta name="theme-color" content="#FFB347">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -55,10 +54,6 @@ body {
 }
 .lang-btn:hover { background: var(--border-light); color: var(--text); }
 .lang-btn.active { background: var(--green); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
-
-/* ============================================================
-   HEADER — GELE ZON ACHTERGROND + GROEN ICOON
-   ============================================================ */
 header {
   background: radial-gradient(circle at 50% 40%, #FFF9E6 0%, #FFE9A8 30%, #FFD166 55%, #FFB347 80%, #FF8C00 100%);
   color: var(--dark);
@@ -130,7 +125,6 @@ h1 i {
   font-weight: 500; max-width: 600px; margin: 0 auto;
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
 }
-
 .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 40px; }
 @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
 .input-section, .results-section {
@@ -200,6 +194,36 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.primary .result-label { color: rgba(255, 255, 255, 0.85); }
 .result-card.primary .result-value { color: white; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
 .result-card.primary .result-unit { color: rgba(255, 255, 255, 0.75); }
+
+/* ============================================================
+   CO₂ KAARTEN — SPECIALE STIJL
+   ============================================================ */
+.result-card.co2 {
+  background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+  color: white; border-color: transparent;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+}
+.result-card.co2 .result-label { color: rgba(255, 255, 255, 0.9); }
+.result-card.co2 .result-value { color: white; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+.result-card.co2 .result-unit { color: rgba(255, 255, 255, 0.85); }
+.result-card.co2::after {
+  content: '🌱';
+  position: absolute; top: 12px; right: 16px;
+  font-size: 1.8rem; opacity: 0.4;
+}
+.result-card.equiv {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.result-card.equiv .result-value { color: #047857; font-size: 1.6rem; }
+.result-card.equiv .result-label { color: #059669; }
+.result-card.equiv .result-unit { color: #10B981; }
+.result-card.equiv::after {
+  content: '🌳';
+  position: absolute; top: 12px; right: 16px;
+  font-size: 1.8rem; opacity: 0.5;
+}
+
 .result-label {
   font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;
   display: block; font-weight: 600; text-transform: uppercase;
@@ -236,7 +260,6 @@ footer { text-align: center; padding: 32px; background: var(--dark); color: whit
 footer p { margin-bottom: 8px; color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; }
 footer a { color: var(--green); text-decoration: none; font-weight: 600; transition: color 0.2s; }
 footer a:hover { color: #34D399; text-decoration: underline; }
-
 #installBtn {
   position: fixed; bottom: 24px; right: 24px;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
@@ -247,7 +270,6 @@ footer a:hover { color: #34D399; text-decoration: underline; }
 }
 #installBtn.show { display: inline-flex; }
 #installBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5); }
-
 @media (max-width: 768px) {
   body { padding: 10px; }
   header { padding: 130px 24px 40px; }
@@ -257,6 +279,7 @@ footer a:hover { color: #34D399; text-decoration: underline; }
   .input-section, .results-section { padding: 24px; }
   .results-grid { grid-template-columns: 1fr; }
   .result-value { font-size: 1.9rem; }
+  .result-card.equiv .result-value { font-size: 1.4rem; }
   .language-selector { position: relative; top: 0; right: 0; margin: 20px auto 0; max-width: 100%; }
   #installBtn { bottom: 16px; right: 16px; padding: 12px 20px; }
 }
@@ -269,7 +292,6 @@ footer a:hover { color: #34D399; text-decoration: underline; }
 </head>
 <body>
 <div class="container">
-  <!-- Language selector — alphabetical by English name -->
   <div class="language-selector">
     <button class="lang-btn" data-lang="zh">中文</button>
     <button class="lang-btn" data-lang="nl">NL</button>
@@ -362,7 +384,20 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           <div class="result-value" id="coverageRate">117%</div>
           <span class="result-unit" data-i18n="ofConsumption">of consumption</span>
         </div>
+
+        <!-- 🌱 NIEUWE CO₂ KAARTEN -->
+        <div class="result-card co2">
+          <span class="result-label" data-i18n="co2Saved">🌱 CO₂ Saved</span>
+          <div class="result-value" id="co2Saved">1,071</div>
+          <span class="result-unit">kg CO₂/year</span>
+        </div>
+        <div class="result-card equiv">
+          <span class="result-label" data-i18n="co2Equivalent">Equivalent</span>
+          <div class="result-value" id="co2Equivalent">🌳 51 trees</div>
+          <span class="result-unit" id="co2EquivalentSub">= 8,925 km by car</span>
+        </div>
       </div>
+
       <div class="chart-container">
         <h3><i class="fas fa-chart-pie"></i> <span data-i18n="seasonalChart">Seasonal Yield</span></h3>
         <div class="chart-box"><canvas id="seasonChart"></canvas></div>
@@ -406,7 +441,7 @@ footer a:hover { color: #34D399; text-decoration: underline; }
 
 <script>
 /* ============================================================
-   SERVICE WORKER REGISTRATION
+   SERVICE WORKER
    ============================================================ */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -446,7 +481,7 @@ window.addEventListener('appinstalled', function() {
 });
 
 /* ============================================================
-   TRANSLATIONS — 14 talen, wereldwijd bruikbaar
+   TRANSLATIONS — 14 talen met CO₂-vertalingen
    ============================================================ */
 const translations = {
   en: {
@@ -477,6 +512,10 @@ const translations = {
     dailyProduction: "Daily Production (avg.)",
     coverageRate: "Coverage Rate",
     ofConsumption: "of consumption",
+    co2Saved: "🌱 CO₂ Saved",
+    co2Equivalent: "Equivalent to",
+    co2Trees: "trees/year",
+    co2Car: "km by car/year",
     seasonalChart: "Seasonal Yield",
     monthlyChart: "Monthly Production",
     parameter: "Parameter",
@@ -521,6 +560,10 @@ const translations = {
     dailyProduction: "Dagopbrengst (gem.)",
     coverageRate: "Dekkingsgraad",
     ofConsumption: "van verbruik",
+    co2Saved: "🌱 CO₂ Bespaard",
+    co2Equivalent: "Equivalent aan",
+    co2Trees: "bomen/jaar",
+    co2Car: "km met auto/jaar",
     seasonalChart: "Seizoensopbrengst",
     monthlyChart: "Maandelijkse Opbrengst",
     parameter: "Parameter",
@@ -565,6 +608,10 @@ const translations = {
     dailyProduction: "Tagesertrag (Durchs.)",
     coverageRate: "Abdeckungsgrad",
     ofConsumption: "des Verbrauchs",
+    co2Saved: "🌱 CO₂ Gespart",
+    co2Equivalent: "Entspricht",
+    co2Trees: "Bäume/Jahr",
+    co2Car: "km mit Auto/Jahr",
     seasonalChart: "Saisonaler Ertrag",
     monthlyChart: "Monatlicher Ertrag",
     parameter: "Parameter",
@@ -609,6 +656,10 @@ const translations = {
     dailyProduction: "Production Quotidienne",
     coverageRate: "Taux de Couverture",
     ofConsumption: "de la consommation",
+    co2Saved: "🌱 CO₂ Économisé",
+    co2Equivalent: "Équivalent à",
+    co2Trees: "arbres/an",
+    co2Car: "km en voiture/an",
     seasonalChart: "Rendement Saisonnier",
     monthlyChart: "Production Mensuelle",
     parameter: "Paramètre",
@@ -653,6 +704,10 @@ const translations = {
     dailyProduction: "Producción Diaria",
     coverageRate: "Tasa de Cobertura",
     ofConsumption: "del consumo",
+    co2Saved: "🌱 CO₂ Ahorrado",
+    co2Equivalent: "Equivale a",
+    co2Trees: "árboles/año",
+    co2Car: "km en coche/año",
     seasonalChart: "Rendimiento Estacional",
     monthlyChart: "Producción Mensual",
     parameter: "Parámetro",
@@ -697,6 +752,10 @@ const translations = {
     dailyProduction: "Produzione Giornaliera",
     coverageRate: "Tasso di Copertura",
     ofConsumption: "del consumo",
+    co2Saved: "🌱 CO₂ Risparmiata",
+    co2Equivalent: "Equivale a",
+    co2Trees: "alberi/anno",
+    co2Car: "km in auto/anno",
     seasonalChart: "Resa Stagionale",
     monthlyChart: "Produzione Mensile",
     parameter: "Parametro",
@@ -741,6 +800,10 @@ const translations = {
     dailyProduction: "Daglig Produksjon",
     coverageRate: "Dekningsgrad",
     ofConsumption: "av forbruk",
+    co2Saved: "🌱 CO₂ Spared",
+    co2Equivalent: "Tilsvarer",
+    co2Trees: "trær/år",
+    co2Car: "km med bil/år",
     seasonalChart: "Sesongavkastning",
     monthlyChart: "Månedlig Produksjon",
     parameter: "Parameter",
@@ -785,6 +848,10 @@ const translations = {
     dailyProduction: "Dzienna Produkcja",
     coverageRate: "Wskaźnik Pokrycia",
     ofConsumption: "zużycia",
+    co2Saved: "🌱 Zaoszczędzone CO₂",
+    co2Equivalent: "Odpowiada",
+    co2Trees: "drzew/rok",
+    co2Car: "km autem/rok",
     seasonalChart: "Wydajność Sezonowa",
     monthlyChart: "Produkcja Miesięczna",
     parameter: "Parametr",
@@ -829,6 +896,10 @@ const translations = {
     dailyProduction: "Daglig Produktion",
     coverageRate: "Täckningsgrad",
     ofConsumption: "av förbrukning",
+    co2Saved: "🌱 CO₂ Sparad",
+    co2Equivalent: "Motsvarar",
+    co2Trees: "träd/år",
+    co2Car: "km med bil/år",
     seasonalChart: "Säsongsavkastning",
     monthlyChart: "Månatlig Produktion",
     parameter: "Parameter",
@@ -873,6 +944,10 @@ const translations = {
     dailyProduction: "Produção Diária",
     coverageRate: "Taxa de Cobertura",
     ofConsumption: "do consumo",
+    co2Saved: "🌱 CO₂ Poupado",
+    co2Equivalent: "Equivale a",
+    co2Trees: "árvores/ano",
+    co2Car: "km de carro/ano",
     seasonalChart: "Rendimento Sazonal",
     monthlyChart: "Produção Mensal",
     parameter: "Parâmetro",
@@ -917,6 +992,10 @@ const translations = {
     dailyProduction: "Productio Quotidiana",
     coverageRate: "Ratio Tegumenti",
     ofConsumption: "consumptionis",
+    co2Saved: "🌱 CO₂ Servatum",
+    co2Equivalent: "Aequivalet",
+    co2Trees: "arbores/annum",
+    co2Car: "km curru/annum",
     seasonalChart: "Proventus Temporalis",
     monthlyChart: "Productio Menstrua",
     parameter: "Parametrum",
@@ -961,6 +1040,10 @@ const translations = {
     dailyProduction: "日发电量 (平均)",
     coverageRate: "覆盖率",
     ofConsumption: "的消耗量",
+    co2Saved: "🌱 减少 CO₂",
+    co2Equivalent: "相当于",
+    co2Trees: "棵树/年",
+    co2Car: "公里汽车/年",
     seasonalChart: "季节性发电量",
     monthlyChart: "月发电量",
     parameter: "参数",
@@ -1005,6 +1088,10 @@ const translations = {
     dailyProduction: "日次発電量 (平均)",
     coverageRate: "カバレッジ率",
     ofConsumption: "消費量の",
+    co2Saved: "🌱 CO₂ 削減",
+    co2Equivalent: "相当",
+    co2Trees: "本の木/年",
+    co2Car: "km 自動車/年",
     seasonalChart: "季節別発電量",
     monthlyChart: "月次発電量",
     parameter: "パラメータ",
@@ -1049,6 +1136,10 @@ const translations = {
     dailyProduction: "Добовий виробіток (сер.)",
     coverageRate: "Рівень покриття",
     ofConsumption: "від споживання",
+    co2Saved: "🌱 CO₂ Заощаджено",
+    co2Equivalent: "Еквівалент",
+    co2Trees: "дерев/рік",
+    co2Car: "км авто/рік",
     seasonalChart: "Сезонний виробіток",
     monthlyChart: "Місячний виробіток",
     parameter: "Параметр",
@@ -1073,6 +1164,13 @@ const translations = {
 let currentLanguage = 'en';
 let seasonChart = null;
 let monthlyChart = null;
+
+/* ============================================================
+   CO₂ CONSTANTS (per EU EEA 2024)
+   ============================================================ */
+const CO2_PER_KWH = 0.25;     // kg CO₂ per kWh (EU grid mix)
+const CO2_PER_TREE = 21;      // kg CO₂ absorbed by one tree per year
+const CO2_PER_KM_CAR = 0.12;  // kg CO₂ per km (average EU car)
 
 /* ============================================================
    LANGUAGE HANDLING
@@ -1130,6 +1228,17 @@ function calculateResults() {
   document.getElementById('yearlyProduction').textContent = annualProduction.toLocaleString('en-US');
   document.getElementById('dailyProduction').textContent = dailyProduction;
   document.getElementById('coverageRate').textContent = coverageRate + '%';
+
+  /* 🌱 CO₂ BEREKENING */
+  const co2Saved = Math.round(annualProduction * CO2_PER_KWH);
+  const treesEquivalent = Math.round(co2Saved / CO2_PER_TREE);
+  const carKmEquivalent = Math.round(co2Saved / CO2_PER_KM_CAR);
+
+  document.getElementById('co2Saved').textContent = co2Saved.toLocaleString('en-US');
+
+  const dict = translations[currentLanguage] || translations.en;
+  document.getElementById('co2Equivalent').textContent = '🌳 ' + treesEquivalent.toLocaleString('en-US') + ' ' + dict.co2Trees;
+  document.getElementById('co2EquivalentSub').textContent = '= ' + carKmEquivalent.toLocaleString('en-US') + ' ' + dict.co2Car;
 
   updateComparisonTable(panelPower, efficiency);
   generateCharts(annualProduction);
@@ -1243,7 +1352,6 @@ document.addEventListener('DOMContentLoaded', function() {
     efficiencyValue.textContent = this.value + '%';
   });
 
-  // Auto-detect browser language
   const browserLang = (navigator.language || 'en').slice(0, 2).toLowerCase();
   const supported = Object.keys(translations);
   const initialLang = supported.indexOf(browserLang) !== -1 ? browserLang : 'en';
