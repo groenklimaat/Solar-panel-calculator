@@ -1,7 +1,7 @@
 {
   "name": "Solar Panel Calculator by GroenKlimaat",
-  "short_name": "Solar Calc",
-  "description": "🌞 Calculate the exact power and yield of your solar panel system. Available in 10 languages. Free, fast, and works offline.",
+  "short_name": "SolarCalc",
+  "description": "🌞 Calculate the exact power and yield of your solar panel system. 14 languages, works offline.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "./index.html",
@@ -14,48 +14,57 @@
   "categories": ["utilities", "productivity", "business", "education"],
   "prefer_related_applications": false,
   "icons": [
-    { "src": "icons/icon-72x72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-96x96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-128x128.png","sizes": "128x128", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-144x144.png","sizes": "144x144", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-152x152.png","sizes": "152x152", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-192x192.png","sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-256x256.png","sizes": "256x256", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-384x384.png","sizes": "384x384", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512x512.png","sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon_72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_512x512_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_512x512_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_512x512_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ],
   "shortcuts": [
     {
       "name": "New Calculation",
       "short_name": "Calculate",
       "description": "Start a new solar panel calculation",
-      "url": "./index.html?action=new",
-      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+      "url": "./index.html",
+      "icons": [{ "src": "icon_96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Privacy Policy",
       "short_name": "Privacy",
       "description": "Read the privacy policy",
       "url": "./privacy.html",
-      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop view of the Solar Panel Calculator with colorful yellow sun design"
-    },
-    {
-      "src": "icons/screenshot-mobile.png",
-      "sizes": "720x1280",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile view of the Solar Panel Calculator"
+      "icons": [{ "src": "icon_96x96.png", "sizes": "96x96" }]
     }
   ]
 }
