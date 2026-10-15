@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar Panel Calculator | GroenKlimaat</title>
 
-<meta name="description" content="🌞 Calculate the exact power, yield and CO₂ savings of your solar panel system. 14 languages, works offline.">
+<meta name="description" content="🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 14 languages, works offline.">
 <meta name="theme-color" content="#FFB347">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SolarCalc">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="app-version" content="1.0.7">
 
 <link rel="apple-touch-icon" href="icon_512x512_192x192.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -196,7 +197,7 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.primary .result-unit { color: rgba(255, 255, 255, 0.75); }
 
 /* ============================================================
-   CO₂ KAARTEN — SPECIALE STIJL
+   CO₂ KAARTEN
    ============================================================ */
 .result-card.co2 {
   background: linear-gradient(135deg, #10B981 0%, #047857 100%);
@@ -215,13 +216,71 @@ input[type="range"]::-webkit-slider-thumb {
   background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
   border-color: rgba(16, 185, 129, 0.4);
 }
-.result-card.equiv .result-value { color: #047857; font-size: 1.6rem; }
 .result-card.equiv .result-label { color: #059669; }
 .result-card.equiv .result-unit { color: #10B981; }
 .result-card.equiv::after {
-  content: '🌳';
+  content: '🚗';
   position: absolute; top: 12px; right: 16px;
   font-size: 1.8rem; opacity: 0.5;
+}
+.result-card.equiv .equiv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+.result-card.equiv .equiv-item {
+  font-size: 0.82rem;
+  color: #047857;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+.result-card.equiv .equiv-item .ico { font-size: 1rem; }
+
+/* ============================================================
+   💶 JAARLIJKSE BESPARING KAART
+   ============================================================ */
+.result-card.savings {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-color: rgba(217, 119, 6, 0.4);
+  grid-column: 1 / -1;
+}
+.result-card.savings .result-value { color: #92400E; font-size: 2.4rem; }
+.result-card.savings .result-label { color: #B45309; }
+.result-card.savings .result-unit { color: #D97706; }
+.result-card.savings::after {
+  content: '💶';
+  position: absolute; top: 12px; right: 16px;
+  font-size: 2rem; opacity: 0.5;
+}
+.result-card.savings .result-sub {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #B45309;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* ============================================================
+   INPUT — STROOMPRIJS
+   ============================================================ */
+.input-group.currency label::before {
+  content: '€';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--green);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 4px;
 }
 
 .result-label {
@@ -279,7 +338,8 @@ footer a:hover { color: #34D399; text-decoration: underline; }
   .input-section, .results-section { padding: 24px; }
   .results-grid { grid-template-columns: 1fr; }
   .result-value { font-size: 1.9rem; }
-  .result-card.equiv .result-value { font-size: 1.4rem; }
+  .result-card.equiv .result-value { font-size: 1.15rem; }
+  .result-card.savings .result-value { font-size: 2rem; }
   .language-selector { position: relative; top: 0; right: 0; margin: 20px auto 0; max-width: 100%; }
   #installBtn { bottom: 16px; right: 16px; padding: 12px 20px; }
 }
@@ -353,6 +413,13 @@ footer a:hover { color: #34D399; text-decoration: underline; }
             <option value="0.7" data-i18n="roof4">Suboptimal (North/Flat)</option>
           </select>
         </div>
+
+        <!-- 💶 STROOMPRIJS -->
+        <div class="input-group currency full-width">
+          <label for="elecPrice"><span data-i18n="elecPrice">Electricity price (€/kWh)</span></label>
+          <input type="number" id="elecPrice" min="0.05" max="1.00" step="0.01" value="0.35">
+          <div class="input-hint" data-i18n="elecPriceHint">Average BE/NL: €0.30–€0.45</div>
+        </div>
       </div>
       <button class="calculate-btn" id="calculateBtn"><i class="fas fa-calculator"></i> <span data-i18n="calculateBtn">Calculate Yield</span></button>
       <div class="info-box">
@@ -385,16 +452,42 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           <span class="result-unit" data-i18n="ofConsumption">of consumption</span>
         </div>
 
-        <!-- 🌱 NIEUWE CO₂ KAARTEN -->
+        <!-- 🌱 CO₂ KAARTEN -->
         <div class="result-card co2">
           <span class="result-label" data-i18n="co2Saved">🌱 CO₂ Saved</span>
-          <div class="result-value" id="co2Saved">1,071</div>
+          <div class="result-value" id="co2Saved">1,020</div>
           <span class="result-unit">kg CO₂/year</span>
         </div>
+
+        <!-- 🚗 EQUIVALENT KAART -->
         <div class="result-card equiv">
-          <span class="result-label" data-i18n="co2Equivalent">Equivalent</span>
-          <div class="result-value" id="co2Equivalent">🌳 51 trees</div>
-          <span class="result-unit" id="co2EquivalentSub">= 8,925 km by car</span>
+          <span class="result-label" data-i18n="co2Equivalent">Equivalent to</span>
+          <div class="equiv-list">
+            <div class="equiv-item">
+              <span class="ico">🚗</span>
+              <span id="equivCar">8,500 km by car</span>
+            </div>
+            <div class="equiv-item">
+              <span class="ico">🔥</span>
+              <span id="equivGas">567 m³ natural gas</span>
+            </div>
+            <div class="equiv-item">
+              <span class="ico">🪵</span>
+              <span id="equivWood">1.02 m³ of wood</span>
+            </div>
+            <div class="equiv-item">
+              <span class="ico">✈️</span>
+              <span id="equivFlight">0.51 flight BRU–NY</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💶 JAARLIJKSE BESPARING KAART (full width) -->
+        <div class="result-card savings">
+          <span class="result-label" data-i18n="savingsTitle">💶 Annual Savings</span>
+          <div class="result-value" id="savingsYear">€ 1,428</div>
+          <span class="result-unit" id="savingsUnit">/year at €0.35/kWh</span>
+          <span class="result-sub" id="savings25">€ 35,700 over 25 years (indicative)</span>
         </div>
       </div>
 
@@ -433,6 +526,7 @@ footer a:hover { color: #34D399; text-decoration: underline; }
         <a href="mailto:info@magicwhale.eu">info@magicwhale.eu</a>
       </p>
       <p data-i18n="footer2">© 2026 GroenKlimaat</p>
+      <p style="font-size:0.75rem;opacity:0.5;margin-top:8px;">v1.0.7</p>
     </div>
   </footer>
 </div>
@@ -481,7 +575,7 @@ window.addEventListener('appinstalled', function() {
 });
 
 /* ============================================================
-   TRANSLATIONS — 14 talen met CO₂-vertalingen
+   TRANSLATIONS — 14 talen
    ============================================================ */
 const translations = {
   en: {
@@ -503,6 +597,8 @@ const translations = {
     roof2: "Good (SE/SW, 25-45°)",
     roof3: "Fair (East/West, 15-55°)",
     roof4: "Suboptimal (North/Flat)",
+    elecPrice: "Electricity price (€/kWh)",
+    elecPriceHint: "Average BE/NL: €0.30–€0.45",
     calculateBtn: "Calculate Yield",
     infoTitle: "Tips for maximum yield",
     infoText: "• Southern orientation (between SE and SW)<br>• Tilt angle between 20° and 40°<br>• Ensure shade-free installation<br>• Quality inverter for optimal efficiency",
@@ -514,8 +610,13 @@ const translations = {
     ofConsumption: "of consumption",
     co2Saved: "🌱 CO₂ Saved",
     co2Equivalent: "Equivalent to",
-    co2Trees: "trees/year",
-    co2Car: "km by car/year",
+    equivCar: "km by car (gasoline)",
+    equivGas: "m³ natural gas",
+    equivWood: "m³ of wood",
+    equivFlight: "flight BRU–NY",
+    savingsTitle: "💶 Annual Savings",
+    savingsUnit: "/year at €0.35/kWh",
+    savingsOverYears: "over 25 years (indicative)",
     seasonalChart: "Seasonal Yield",
     monthlyChart: "Monthly Production",
     parameter: "Parameter",
@@ -551,6 +652,8 @@ const translations = {
     roof2: "Goed (ZO/ZW, 25-45°)",
     roof3: "Redelijk (O/W, 15-55°)",
     roof4: "Suboptimaal (Noord/Plat)",
+    elecPrice: "Stroomprijs (€/kWh)",
+    elecPriceHint: "Gemiddeld BE/NL: €0,30–€0,45",
     calculateBtn: "Bereken Opbrengst",
     infoTitle: "Tips voor maximale opbrengst",
     infoText: "• Zuidelijke oriëntatie (tussen ZO en ZW)<br>• Hellingshoek tussen 20° en 40°<br>• Zorg voor schaduwvrije installatie<br>• Kwalitatieve omvormer voor optimale efficiëntie",
@@ -562,8 +665,13 @@ const translations = {
     ofConsumption: "van verbruik",
     co2Saved: "🌱 CO₂ Bespaard",
     co2Equivalent: "Equivalent aan",
-    co2Trees: "bomen/jaar",
-    co2Car: "km met auto/jaar",
+    equivCar: "km met de auto (benzine)",
+    equivGas: "m³ aardgas",
+    equivWood: "m³ hout",
+    equivFlight: "vlucht BRU–NY",
+    savingsTitle: "💶 Jaarlijkse Besparing",
+    savingsUnit: "/jaar bij €0,35/kWh",
+    savingsOverYears: "over 25 jaar (indicatief)",
     seasonalChart: "Seizoensopbrengst",
     monthlyChart: "Maandelijkse Opbrengst",
     parameter: "Parameter",
@@ -599,6 +707,8 @@ const translations = {
     roof2: "Gut (SO/SW, 25-45°)",
     roof3: "Mäßig (O/W, 15-55°)",
     roof4: "Suboptimal (Nord/Flach)",
+    elecPrice: "Strompreis (€/kWh)",
+    elecPriceHint: "Durchschnitt BE/NL: 0,30–0,45 €",
     calculateBtn: "Ertrag berechnen",
     infoTitle: "Tipps für maximalen Ertrag",
     infoText: "• Südliche Ausrichtung (zwischen SO und SW)<br>• Neigungswinkel zwischen 20° und 40°<br>• Schattenfreie Installation sicherstellen<br>• Qualitätswechselrichter für optimale Effizienz",
@@ -610,8 +720,13 @@ const translations = {
     ofConsumption: "des Verbrauchs",
     co2Saved: "🌱 CO₂ Gespart",
     co2Equivalent: "Entspricht",
-    co2Trees: "Bäume/Jahr",
-    co2Car: "km mit Auto/Jahr",
+    equivCar: "km mit Auto (Benzin)",
+    equivGas: "m³ Erdgas",
+    equivWood: "m³ Holz",
+    equivFlight: "Flug BRU–NY",
+    savingsTitle: "💶 Jährliche Ersparnis",
+    savingsUnit: "/Jahr bei 0,35 €/kWh",
+    savingsOverYears: "über 25 Jahre (indikativ)",
     seasonalChart: "Saisonaler Ertrag",
     monthlyChart: "Monatlicher Ertrag",
     parameter: "Parameter",
@@ -647,6 +762,8 @@ const translations = {
     roof2: "Bon (SE/SO, 25-45°)",
     roof3: "Moyen (E/O, 15-55°)",
     roof4: "Suboptimal (Nord/Plat)",
+    elecPrice: "Prix de l'électricité (€/kWh)",
+    elecPriceHint: "Moyenne BE/NL : 0,30–0,45 €",
     calculateBtn: "Calculer le Rendement",
     infoTitle: "Conseils pour un rendement maximal",
     infoText: "• Orientation sud (entre SE et SO)<br>• Angle d'inclinaison entre 20° et 40°<br>• Installation sans ombre<br>• Onduleur de qualité pour une efficacité optimale",
@@ -658,8 +775,13 @@ const translations = {
     ofConsumption: "de la consommation",
     co2Saved: "🌱 CO₂ Économisé",
     co2Equivalent: "Équivalent à",
-    co2Trees: "arbres/an",
-    co2Car: "km en voiture/an",
+    equivCar: "km en voiture (essence)",
+    equivGas: "m³ de gaz naturel",
+    equivWood: "m³ de bois",
+    equivFlight: "vol BRU–NY",
+    savingsTitle: "💶 Économie Annuelle",
+    savingsUnit: "/an à 0,35 €/kWh",
+    savingsOverYears: "sur 25 ans (indicatif)",
     seasonalChart: "Rendement Saisonnier",
     monthlyChart: "Production Mensuelle",
     parameter: "Paramètre",
@@ -695,6 +817,8 @@ const translations = {
     roof2: "Bueno (SE/SO, 25-45°)",
     roof3: "Regular (E/O, 15-55°)",
     roof4: "Subóptimo (Norte/Plano)",
+    elecPrice: "Precio electricidad (€/kWh)",
+    elecPriceHint: "Media BE/NL: 0,30–0,45 €",
     calculateBtn: "Calcular Rendimiento",
     infoTitle: "Consejos para máximo rendimiento",
     infoText: "• Orientación sur (entre SE y SO)<br>• Ángulo de inclinación entre 20° y 40°<br>• Instalación libre de sombras<br>• Inversor de calidad para eficiencia óptima",
@@ -706,8 +830,13 @@ const translations = {
     ofConsumption: "del consumo",
     co2Saved: "🌱 CO₂ Ahorrado",
     co2Equivalent: "Equivale a",
-    co2Trees: "árboles/año",
-    co2Car: "km en coche/año",
+    equivCar: "km en coche (gasolina)",
+    equivGas: "m³ de gas natural",
+    equivWood: "m³ de madera",
+    equivFlight: "vuelo BRU–NY",
+    savingsTitle: "💶 Ahorro Anual",
+    savingsUnit: "/año a 0,35 €/kWh",
+    savingsOverYears: "en 25 años (indicativo)",
     seasonalChart: "Rendimiento Estacional",
     monthlyChart: "Producción Mensual",
     parameter: "Parámetro",
@@ -743,6 +872,8 @@ const translations = {
     roof2: "Buono (SE/SO, 25-45°)",
     roof3: "Discreto (E/O, 15-55°)",
     roof4: "Subottimale (Nord/Piatto)",
+    elecPrice: "Prezzo elettricità (€/kWh)",
+    elecPriceHint: "Media BE/NL: 0,30–0,45 €",
     calculateBtn: "Calcola Resa",
     infoTitle: "Consigli per resa massima",
     infoText: "• Orientamento sud (tra SE e SO)<br>• Angolo d'inclinazione tra 20° e 40°<br>• Installazione senza ombre<br>• Inverter di qualità per efficienza ottimale",
@@ -754,8 +885,13 @@ const translations = {
     ofConsumption: "del consumo",
     co2Saved: "🌱 CO₂ Risparmiata",
     co2Equivalent: "Equivale a",
-    co2Trees: "alberi/anno",
-    co2Car: "km in auto/anno",
+    equivCar: "km in auto (benzina)",
+    equivGas: "m³ di gas naturale",
+    equivWood: "m³ di legno",
+    equivFlight: "volo BRU–NY",
+    savingsTitle: "💶 Risparmio Annuale",
+    savingsUnit: "/anno a 0,35 €/kWh",
+    savingsOverYears: "in 25 anni (indicativo)",
     seasonalChart: "Resa Stagionale",
     monthlyChart: "Produzione Mensile",
     parameter: "Parametro",
@@ -791,6 +927,8 @@ const translations = {
     roof2: "Bra (SØ/SV, 25-45°)",
     roof3: "Greit (Ø/V, 15-55°)",
     roof4: "Suboptimal (Nord/Flatt)",
+    elecPrice: "Strømpris (€/kWh)",
+    elecPriceHint: "Gjennomsnitt BE/NL: 0,30–0,45 €",
     calculateBtn: "Beregn Avkastning",
     infoTitle: "Tips for maksimal avkastning",
     infoText: "• Sørlig orientering (mellom SØ og SV)<br>• Helningsvinkel mellom 20° og 40°<br>• Sørg for skyggefri installasjon<br>• Kvalitetsinverter for optimal effektivitet",
@@ -802,8 +940,13 @@ const translations = {
     ofConsumption: "av forbruk",
     co2Saved: "🌱 CO₂ Spared",
     co2Equivalent: "Tilsvarer",
-    co2Trees: "trær/år",
-    co2Car: "km med bil/år",
+    equivCar: "km med bil (bensin)",
+    equivGas: "m³ naturgass",
+    equivWood: "m³ ved",
+    equivFlight: "fly BRU–NY",
+    savingsTitle: "💶 Årlig Besparelse",
+    savingsUnit: "/år ved 0,35 €/kWh",
+    savingsOverYears: "over 25 år (indikativ)",
     seasonalChart: "Sesongavkastning",
     monthlyChart: "Månedlig Produksjon",
     parameter: "Parameter",
@@ -839,6 +982,8 @@ const translations = {
     roof2: "Dobre (PD-WS, 25-45°)",
     roof3: "Dostateczne (Wsch/Zach, 15-55°)",
     roof4: "Suboptymalne (Północ/Płaski)",
+    elecPrice: "Cena prądu (€/kWh)",
+    elecPriceHint: "Średnia BE/NL: 0,30–0,45 €",
     calculateBtn: "Oblicz Wydajność",
     infoTitle: "Wskazówki dla maksymalnej wydajności",
     infoText: "• Orientacja południowa (między PD-WS)<br>• Kąt nachylenia między 20° a 40°<br>• Zapewnij instalację bez cienia<br>• Wysokiej jakości falownik",
@@ -850,8 +995,13 @@ const translations = {
     ofConsumption: "zużycia",
     co2Saved: "🌱 Zaoszczędzone CO₂",
     co2Equivalent: "Odpowiada",
-    co2Trees: "drzew/rok",
-    co2Car: "km autem/rok",
+    equivCar: "km autem (benzyna)",
+    equivGas: "m³ gazu ziemnego",
+    equivWood: "m³ drewna",
+    equivFlight: "lot BRU–NY",
+    savingsTitle: "💶 Roczna Oszczędność",
+    savingsUnit: "/rok przy 0,35 €/kWh",
+    savingsOverYears: "w ciągu 25 lat (orientacyjnie)",
     seasonalChart: "Wydajność Sezonowa",
     monthlyChart: "Produkcja Miesięczna",
     parameter: "Parametr",
@@ -887,6 +1037,8 @@ const translations = {
     roof2: "Bra (SO/SV, 25-45°)",
     roof3: "Okej (Ö/V, 15-55°)",
     roof4: "Suboptimalt (Norr/Platt)",
+    elecPrice: "Elpris (€/kWh)",
+    elecPriceHint: "Genomsnitt BE/NL: 0,30–0,45 €",
     calculateBtn: "Beräkna Avkastning",
     infoTitle: "Tips för maximal avkastning",
     infoText: "• Sydlig orientering (mellan SO och SV)<br>• Lutningsvinkel mellan 20° och 40°<br>• Säkerställ skuggfri installation<br>• Kvalitetsväxelriktare för optimal effektivitet",
@@ -898,8 +1050,13 @@ const translations = {
     ofConsumption: "av förbrukning",
     co2Saved: "🌱 CO₂ Sparad",
     co2Equivalent: "Motsvarar",
-    co2Trees: "träd/år",
-    co2Car: "km med bil/år",
+    equivCar: "km med bil (bensin)",
+    equivGas: "m³ naturgas",
+    equivWood: "m³ ved",
+    equivFlight: "flyg BRU–NY",
+    savingsTitle: "💶 Årlig Besparing",
+    savingsUnit: "/år vid 0,35 €/kWh",
+    savingsOverYears: "över 25 år (indikativt)",
     seasonalChart: "Säsongsavkastning",
     monthlyChart: "Månatlig Produktion",
     parameter: "Parameter",
@@ -935,6 +1092,8 @@ const translations = {
     roof2: "Bom (SE/SO, 25-45°)",
     roof3: "Razoável (L/O, 15-55°)",
     roof4: "Subótimo (Norte/Plano)",
+    elecPrice: "Preço eletricidade (€/kWh)",
+    elecPriceHint: "Média BE/NL: 0,30–0,45 €",
     calculateBtn: "Calcular Rendimento",
     infoTitle: "Dicas para rendimento máximo",
     infoText: "• Orientação sul (entre SE e SO)<br>• Ângulo de inclinação entre 20° e 40°<br>• Garanta instalação sem sombras<br>• Inversor de qualidade para eficiência ideal",
@@ -946,8 +1105,13 @@ const translations = {
     ofConsumption: "do consumo",
     co2Saved: "🌱 CO₂ Poupado",
     co2Equivalent: "Equivale a",
-    co2Trees: "árvores/ano",
-    co2Car: "km de carro/ano",
+    equivCar: "km de carro (gasolina)",
+    equivGas: "m³ de gás natural",
+    equivWood: "m³ de madeira",
+    equivFlight: "voo BRU–NY",
+    savingsTitle: "💶 Poupança Anual",
+    savingsUnit: "/ano a 0,35 €/kWh",
+    savingsOverYears: "em 25 anos (indicativo)",
     seasonalChart: "Rendimento Sazonal",
     monthlyChart: "Produção Mensal",
     parameter: "Parâmetro",
@@ -983,6 +1147,8 @@ const translations = {
     roof2: "Bonum (SE/SO, 25-45°)",
     roof3: "Satis (Oriens/Occidens, 15-55°)",
     roof4: "Suboptimum (Septentrio/Planum)",
+    elecPrice: "Pretium electricitatis (€/kWh)",
+    elecPriceHint: "Medium BE/NL: 0,30–0,45 €",
     calculateBtn: "Computa Proventum",
     infoTitle: "Consilia pro maximo proventu",
     infoText: "• Orientatio meridionalis (inter SE et SO)<br>• Angulus inclinationis inter 20° et 40°<br>• Cura ut installatio sine umbra sit<br>• Inversor qualitatis pro efficientia optima",
@@ -994,8 +1160,13 @@ const translations = {
     ofConsumption: "consumptionis",
     co2Saved: "🌱 CO₂ Servatum",
     co2Equivalent: "Aequivalet",
-    co2Trees: "arbores/annum",
-    co2Car: "km curru/annum",
+    equivCar: "km curru (benzinum)",
+    equivGas: "m³ gasi naturalis",
+    equivWood: "m³ ligni",
+    equivFlight: "volatus BRU–NY",
+    savingsTitle: "💶 Compensatio Annua",
+    savingsUnit: "/annum ad 0,35 €/kWh",
+    savingsOverYears: "per 25 annos (indicativum)",
     seasonalChart: "Proventus Temporalis",
     monthlyChart: "Productio Menstrua",
     parameter: "Parametrum",
@@ -1031,6 +1202,8 @@ const translations = {
     roof2: "良好 (东南/西南, 25-45°)",
     roof3: "一般 (东/西, 15-55°)",
     roof4: "不理想 (朝北/平顶)",
+    elecPrice: "电价 (€/kWh)",
+    elecPriceHint: "BE/NL 平均：€0.30–€0.45",
     calculateBtn: "计算发电量",
     infoTitle: "最大发电量提示",
     infoText: "• 朝南方向 (东南和西南之间)<br>• 倾斜角在 20° 至 40° 之间<br>• 确保无阴影安装<br>• 优质逆变器以获得最佳效率",
@@ -1042,8 +1215,13 @@ const translations = {
     ofConsumption: "的消耗量",
     co2Saved: "🌱 减少 CO₂",
     co2Equivalent: "相当于",
-    co2Trees: "棵树/年",
-    co2Car: "公里汽车/年",
+    equivCar: "公里汽车 (汽油)",
+    equivGas: "立方米天然气",
+    equivWood: "立方米木材",
+    equivFlight: "航班 BRU–NY",
+    savingsTitle: "💶 年节省",
+    savingsUnit: "/年，€0.35/kWh",
+    savingsOverYears: "25 年累计 (参考)",
     seasonalChart: "季节性发电量",
     monthlyChart: "月发电量",
     parameter: "参数",
@@ -1079,6 +1257,8 @@ const translations = {
     roof2: "良好 (南東/南西, 25-45°)",
     roof3: "普通 (東/西, 15-55°)",
     roof4: "最適でない (北向き/平ら)",
+    elecPrice: "電気料金 (€/kWh)",
+    elecPriceHint: "BE/NL 平均：€0.30–€0.45",
     calculateBtn: "発電量を計算",
     infoTitle: "最大発電量のためのヒント",
     infoText: "• 南向き (南東と南西の間)<br>• 傾斜角 20°〜40°<br>• 影のない設置を確保<br>• 最適な効率のための高品質インバーター",
@@ -1090,8 +1270,13 @@ const translations = {
     ofConsumption: "消費量の",
     co2Saved: "🌱 CO₂ 削減",
     co2Equivalent: "相当",
-    co2Trees: "本の木/年",
-    co2Car: "km 自動車/年",
+    equivCar: "km 自動車 (ガソリン)",
+    equivGas: "m³ 天然ガス",
+    equivWood: "m³ 木材",
+    equivFlight: "フライト BRU–NY",
+    savingsTitle: "💶 年間節約",
+    savingsUnit: "/年、€0.35/kWh",
+    savingsOverYears: "25年間で (参考)",
     seasonalChart: "季節別発電量",
     monthlyChart: "月次発電量",
     parameter: "パラメータ",
@@ -1127,6 +1312,8 @@ const translations = {
     roof2: "Добре (ПдСх/ПдЗх, 25-45°)",
     roof3: "Задовільно (Сх/Зх, 15-55°)",
     roof4: "Неоптимально (Північ/Плоский)",
+    elecPrice: "Ціна електроенергії (€/кВт·год)",
+    elecPriceHint: "Середня BE/NL: 0,30–0,45 €",
     calculateBtn: "Розрахувати виробіток",
     infoTitle: "Поради для максимального виробітку",
     infoText: "• Південна орієнтація (між ПдСх та ПдЗх)<br>• Кут нахилу між 20° та 40°<br>• Забезпечте встановлення без тіні<br>• Якісний інвертор для оптимальної ефективності",
@@ -1138,8 +1325,13 @@ const translations = {
     ofConsumption: "від споживання",
     co2Saved: "🌱 CO₂ Заощаджено",
     co2Equivalent: "Еквівалент",
-    co2Trees: "дерев/рік",
-    co2Car: "км авто/рік",
+    equivCar: "км авто (бензин)",
+    equivGas: "м³ природного газу",
+    equivWood: "м³ деревини",
+    equivFlight: "рейс BRU–NY",
+    savingsTitle: "💶 Річна Економія",
+    savingsUnit: "/рік при 0,35 €/кВт·год",
+    savingsOverYears: "за 25 років (орієнтовно)",
     seasonalChart: "Сезонний виробіток",
     monthlyChart: "Місячний виробіток",
     parameter: "Параметр",
@@ -1169,8 +1361,20 @@ let monthlyChart = null;
    CO₂ CONSTANTS (per EU EEA 2024)
    ============================================================ */
 const CO2_PER_KWH = 0.25;     // kg CO₂ per kWh (EU grid mix)
-const CO2_PER_TREE = 21;      // kg CO₂ absorbed by one tree per year
-const CO2_PER_KM_CAR = 0.12;  // kg CO₂ per km (average EU car)
+
+/* ============================================================
+   CO₂ EQUIVALENT CONSTANTS (realistisch BE/NL 2026)
+   ============================================================ */
+const CO2_PER_KM_CAR_GASOLINE = 0.12;   // kg CO₂ per km (benzinewagen)
+const CO2_PER_M3_GAS          = 1.80;   // kg CO₂ per m³ aardgas
+const CO2_PER_M3_WOOD         = 1000;   // kg CO₂ opgeslagen per m³ hout
+const CO2_PER_FLIGHT_BRU_NY   = 2000;   // kg CO₂ per retourvlucht Brussel–New York
+
+/* ============================================================
+   FINANCIËLE CONSTANTEN
+   ============================================================ */
+const DEFAULT_ELEC_PRICE = 0.35;   // €/kWh fallback
+const PANEL_LIFETIME_YEARS = 25;   // Verwachte levensduur zonnepanelen
 
 /* ============================================================
    LANGUAGE HANDLING
@@ -1213,6 +1417,7 @@ function calculateResults() {
   const efficiency = parseInt(document.getElementById('efficiency').value) || 85;
   const locationFactor = parseFloat(document.getElementById('location').value) || 1.05;
   const roofFactor = parseFloat(document.getElementById('roofAngle').value) || 1.0;
+  const elecPrice = parseFloat(document.getElementById('elecPrice').value) || DEFAULT_ELEC_PRICE;
 
   document.getElementById('efficiencyValue').textContent = efficiency + '%';
 
@@ -1231,14 +1436,34 @@ function calculateResults() {
 
   /* 🌱 CO₂ BEREKENING */
   const co2Saved = Math.round(annualProduction * CO2_PER_KWH);
-  const treesEquivalent = Math.round(co2Saved / CO2_PER_TREE);
-  const carKmEquivalent = Math.round(co2Saved / CO2_PER_KM_CAR);
-
   document.getElementById('co2Saved').textContent = co2Saved.toLocaleString('en-US');
 
+  /* 🚗 EQUIVALENT BEREKENING */
+  const carKmEquivalent   = Math.round(co2Saved / CO2_PER_KM_CAR_GASOLINE);
+  const gasM3Equivalent   = Math.round(co2Saved / CO2_PER_M3_GAS);
+  const woodM3Equivalent  = (co2Saved / CO2_PER_M3_WOOD).toFixed(2);
+  const flightEquivalent  = (co2Saved / CO2_PER_FLIGHT_BRU_NY).toFixed(2);
+
   const dict = translations[currentLanguage] || translations.en;
-  document.getElementById('co2Equivalent').textContent = '🌳 ' + treesEquivalent.toLocaleString('en-US') + ' ' + dict.co2Trees;
-  document.getElementById('co2EquivalentSub').textContent = '= ' + carKmEquivalent.toLocaleString('en-US') + ' ' + dict.co2Car;
+
+  document.getElementById('equivCar').textContent =
+    carKmEquivalent.toLocaleString('en-US') + ' ' + dict.equivCar;
+  document.getElementById('equivGas').textContent =
+    gasM3Equivalent.toLocaleString('en-US') + ' ' + dict.equivGas;
+  document.getElementById('equivWood').textContent =
+    woodM3Equivalent + ' ' + dict.equivWood;
+  document.getElementById('equivFlight').textContent =
+    flightEquivalent + ' ' + dict.equivFlight;
+
+  /* 💶 JAARLIJKSE BESPARING */
+  const savingsYear = Math.round(annualProduction * elecPrice);
+  const savings25 = savingsYear * PANEL_LIFETIME_YEARS;
+
+  document.getElementById('savingsYear').textContent = '€ ' + savingsYear.toLocaleString('en-US');
+  document.getElementById('savingsUnit').textContent =
+    '/year at €' + elecPrice.toFixed(2) + '/kWh';
+  document.getElementById('savings25').textContent =
+    '€ ' + savings25.toLocaleString('en-US') + ' ' + (dict.savingsOverYears || 'over 25 years');
 
   updateComparisonTable(panelPower, efficiency);
   generateCharts(annualProduction);
