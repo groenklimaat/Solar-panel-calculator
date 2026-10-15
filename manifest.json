@@ -2,7 +2,7 @@
   "name": "GroenKlimaat Solar Calculator",
   "short_name": "SolarCalc",
   "description": "🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 14 languages, works offline.",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "start_url": "./index.html",
   "scope": "./",
   "id": "/solar-calculator/",
@@ -41,22 +41,6 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshots/mobile.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Solar Calculator on mobile"
-    },
-    {
-      "src": "screenshots/desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Solar Calculator on desktop"
     }
   ],
   "shortcuts": [
