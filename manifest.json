@@ -1,160 +1,85 @@
-/* ============================================================
-   SERVICE WORKER — Solar Panel Calculator by GroenKlimaat
-   Versie: 1.0.3
-   ------------------------------------------------------------
-   Strategie:
-     - App shell (HTML + icons) → cache-first
-     - CDN (Chart.js, FontAwesome) → stale-while-revalidate
-     - HTML navigatie → network-first met offline fallback
-   ============================================================ */
-
-const CACHE_VERSION = 'v1.0.3';
-const CACHE_NAME    = `solar-calc-${CACHE_VERSION}`;
-const OFFLINE_URL   = './offline.html';
-
-/* Bestanden die altijd offline beschikbaar moeten zijn */
-const PRECACHE_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './offline.html',
-  './privacy.html',
-  './icon.svg',
-  './icon_72x72.png',
-  './icon_96x96.png',
-  './icon_512x512_192x192.png',
-  './icon_512x512_512x512.png'
-];
-
-/* CDN-bronnen die gecached mogen worden (stale-while-revalidate) */
-const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
-
-/* ============================================================
-   INSTALL — precache de app shell
-   ============================================================ */
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      console.log('[SW] Pre-caching app shell — version', CACHE_VERSION);
-      try {
-        await cache.addAll(PRECACHE_ASSETS);
-      } catch (err) {
-        console.warn('[SW] Pre-cache failed for some assets:', err);
-      }
-      await self.skipWaiting();
-    })()
-  );
-});
-
-/* ============================================================
-   ACTIVATE — oude caches opruimen
-   ============================================================ */
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(
-        keys
-          .filter(key => key.startsWith('solar-calc-') && key !== CACHE_NAME)
-          .map(key => {
-            console.log('[SW] Removing old cache:', key);
-            return caches.delete(key);
-          })
-      );
-      await self.clients.claim();
-      console.log('[SW] Activated — version', CACHE_VERSION);
-    })()
-  );
-});
-
-/* ============================================================
-   FETCH — caching-strategieën
-   ============================================================ */
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-
-  // Alleen GET-requests cachen
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-
-  /* 1. HTML-navigatie → network-first, offline fallback */
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      (async () => {
-        try {
-          const networkResponse = await fetch(request);
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(request, networkResponse.clone());
-          return networkResponse;
-        } catch (err) {
-          const cache = await caches.open(CACHE_NAME);
-          const cached = await cache.match(request);
-          return cached || cache.match(OFFLINE_URL);
-        }
-      })()
-    );
-    return;
-  }
-
-  /* 2. CDN-bronnen → stale-while-revalidate */
-  if (CDN_HOSTS.includes(url.hostname)) {
-    event.respondWith(
-      (async () => {
-        const cache = await caches.open(CACHE_NAME);
-        const cached = await cache.match(request);
-
-        const fetchPromise = fetch(request)
-          .then(response => {
-            if (response && response.status === 200) {
-              cache.put(request, response.clone());
-            }
-            return response;
-          })
-          .catch(() => cached);
-
-        return cached || fetchPromise;
-      })()
-    );
-    return;
-  }
-
-  /* 3. Zelfde origin (app shell, icons) → cache-first */
-  if (url.origin === self.location.origin) {
-    event.respondWith(
-      (async () => {
-        const cache = await caches.open(CACHE_NAME);
-        const cached = await cache.match(request);
-        if (cached) return cached;
-
-        try {
-          const networkResponse = await fetch(request);
-          if (networkResponse && networkResponse.status === 200) {
-            cache.put(request, networkResponse.clone());
-          }
-          return networkResponse;
-        } catch (err) {
-          return caches.match(OFFLINE_URL);
-        }
-      })()
-    );
-    return;
-  }
-
-  /* 4. Alle andere requests → gewoon doorlaten */
-});
-
-/* ============================================================
-   MESSAGE — handmatige cache-update mogelijk maken
-   ============================================================ */
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    caches.keys().then(keys =>
-      Promise.all(keys.map(key => caches.delete(key)))
-    );
-  }
-});
+{
+  "name": "GroenKlimaat Solar Calculator",
+  "short_name": "SolarCalc",
+  "description": "🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 14 languages, works offline.",
+  "version": "1.0.7",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "/solar-calculator/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#F8FAFC",
+  "theme_color": "#FFB347",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["utilities", "productivity", "education"],
+  "prefer_related_applications": false,
+  "privacy_policy_url": "https://groenklimaat.github.io/Solar-panel-calculator/privacy.html",
+  "terms_of_service_url": "https://groenklimaat.github.io/Solar-panel-calculator/terms.html",
+  "icons": [
+    {
+      "src": "icon_512x512_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_512x512_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon_512x512_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Solar Calculator on mobile"
+    },
+    {
+      "src": "screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Solar Calculator on desktop"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Calculation",
+      "short_name": "Calculate",
+      "description": "Start a new solar panel calculation",
+      "url": "./index.html?action=calculate",
+      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Privacy Policy",
+      "short_name": "Privacy",
+      "description": "Read our privacy policy",
+      "url": "./privacy.html",
+      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Terms and Conditions",
+      "short_name": "Terms",
+      "description": "Read our terms and conditions",
+      "url": "./terms.html",
+      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
