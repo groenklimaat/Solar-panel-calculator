@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar Panel Calculator | GroenKlimaat</title>
 
-<meta name="description" content="🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 14 languages, works offline.">
+<meta name="description" content="🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 15 languages, works offline.">
 <meta name="theme-color" content="#FFB347">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SolarCalc">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="app-version" content="1.0.7">
+<meta name="app-version" content="1.0.9">
 
 <link rel="apple-touch-icon" href="icon_512x512_192x192.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -196,9 +202,7 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.primary .result-value { color: white; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
 .result-card.primary .result-unit { color: rgba(255, 255, 255, 0.75); }
 
-/* ============================================================
-   CO₂ KAARTEN
-   ============================================================ */
+/* CO₂ KAARTEN */
 .result-card.co2 {
   background: linear-gradient(135deg, #10B981 0%, #047857 100%);
   color: white; border-color: transparent;
@@ -208,8 +212,7 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.co2 .result-value { color: white; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
 .result-card.co2 .result-unit { color: rgba(255, 255, 255, 0.85); }
 .result-card.co2::after {
-  content: '🌱';
-  position: absolute; top: 12px; right: 16px;
+  content: '🌱'; position: absolute; top: 12px; right: 16px;
   font-size: 1.8rem; opacity: 0.4;
 }
 .result-card.equiv {
@@ -219,31 +222,20 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.equiv .result-label { color: #059669; }
 .result-card.equiv .result-unit { color: #10B981; }
 .result-card.equiv::after {
-  content: '🚗';
-  position: absolute; top: 12px; right: 16px;
+  content: '🚗'; position: absolute; top: 12px; right: 16px;
   font-size: 1.8rem; opacity: 0.5;
 }
 .result-card.equiv .equiv-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 10px;
+  display: flex; flex-direction: column; gap: 6px; margin-top: 10px;
 }
 .result-card.equiv .equiv-item {
-  font-size: 0.82rem;
-  color: #047857;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 4px 0;
+  font-size: 0.82rem; color: #047857; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 4px 0;
 }
 .result-card.equiv .equiv-item .ico { font-size: 1rem; }
 
-/* ============================================================
-   💶 JAARLIJKSE BESPARING KAART
-   ============================================================ */
+/* JAARLIJKSE BESPARING KAART */
 .result-card.savings {
   background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
   border-color: rgba(217, 119, 6, 0.4);
@@ -253,33 +245,26 @@ input[type="range"]::-webkit-slider-thumb {
 .result-card.savings .result-label { color: #B45309; }
 .result-card.savings .result-unit { color: #D97706; }
 .result-card.savings::after {
-  content: '💶';
-  position: absolute; top: 12px; right: 16px;
+  content: '💶'; position: absolute; top: 12px; right: 16px;
   font-size: 2rem; opacity: 0.5;
 }
 .result-card.savings .result-sub {
-  display: block;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: #B45309;
-  font-weight: 600;
-  opacity: 0.9;
+  display: block; margin-top: 8px;
+  font-size: 0.8rem; color: #B45309;
+  font-weight: 600; opacity: 0.9;
 }
+.result-card.savings.usd::after { content: '💵'; }
+.result-card.savings.gbp::after { content: '💷'; }
 
-/* ============================================================
-   INPUT — STROOMPRIJS
-   ============================================================ */
+/* INPUT — STROOMPRIJS met dynamisch valutasymbool */
 .input-group.currency label::before {
-  content: '€';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px; height: 18px;
-  background: var(--green);
-  color: white;
+  content: attr(data-currency);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px;
+  background: var(--green); color: white;
   border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0 6px;
   margin-right: 4px;
 }
 
@@ -353,6 +338,8 @@ footer a:hover { color: #34D399; text-decoration: underline; }
 <body>
 <div class="container">
   <div class="language-selector">
+    <button class="lang-btn" data-lang="us">US</button>
+    <button class="lang-btn" data-lang="gb">GB</button>
     <button class="lang-btn" data-lang="zh">中文</button>
     <button class="lang-btn" data-lang="nl">NL</button>
     <button class="lang-btn active" data-lang="en">EN</button>
@@ -414,11 +401,13 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           </select>
         </div>
 
-        <!-- 💶 STROOMPRIJS -->
+        <!-- 💶 STROOMPRIJS met dynamisch valutasymbool -->
         <div class="input-group currency full-width">
-          <label for="elecPrice"><span data-i18n="elecPrice">Electricity price (€/kWh)</span></label>
-          <input type="number" id="elecPrice" min="0.05" max="1.00" step="0.01" value="0.35">
-          <div class="input-hint" data-i18n="elecPriceHint">Average BE/NL: €0.30–€0.45</div>
+          <label for="elecPrice" data-currency="€" id="elecPriceLabel">
+            <span data-i18n="elecPrice">Electricity price (€/kWh)</span>
+          </label>
+          <input type="number" id="elecPrice" min="0.01" max="2.00" step="0.01" value="0.35">
+          <div class="input-hint" data-i18n="elecPriceHint" id="elecPriceHint">Average BE/NL: €0.30–€0.45</div>
         </div>
       </div>
       <button class="calculate-btn" id="calculateBtn"><i class="fas fa-calculator"></i> <span data-i18n="calculateBtn">Calculate Yield</span></button>
@@ -452,14 +441,12 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           <span class="result-unit" data-i18n="ofConsumption">of consumption</span>
         </div>
 
-        <!-- 🌱 CO₂ KAARTEN -->
         <div class="result-card co2">
           <span class="result-label" data-i18n="co2Saved">🌱 CO₂ Saved</span>
           <div class="result-value" id="co2Saved">1,020</div>
           <span class="result-unit">kg CO₂/year</span>
         </div>
 
-        <!-- 🚗 EQUIVALENT KAART -->
         <div class="result-card equiv">
           <span class="result-label" data-i18n="co2Equivalent">Equivalent to</span>
           <div class="equiv-list">
@@ -482,8 +469,7 @@ footer a:hover { color: #34D399; text-decoration: underline; }
           </div>
         </div>
 
-        <!-- 💶 JAARLIJKSE BESPARING KAART (full width) -->
-        <div class="result-card savings">
+        <div class="result-card savings" id="savingsCard">
           <span class="result-label" data-i18n="savingsTitle">💶 Annual Savings</span>
           <div class="result-value" id="savingsYear">€ 1,428</div>
           <span class="result-unit" id="savingsUnit">/year at €0.35/kWh</span>
@@ -526,7 +512,7 @@ footer a:hover { color: #34D399; text-decoration: underline; }
         <a href="mailto:info@magicwhale.eu">info@magicwhale.eu</a>
       </p>
       <p data-i18n="footer2">© 2026 GroenKlimaat</p>
-      <p style="font-size:0.75rem;opacity:0.5;margin-top:8px;">v1.0.7</p>
+      <p style="font-size:0.75rem;opacity:0.5;margin-top:8px;">v1.0.9</p>
     </div>
   </footer>
 </div>
@@ -575,9 +561,94 @@ window.addEventListener('appinstalled', function() {
 });
 
 /* ============================================================
-   TRANSLATIONS — 14 talen
+   CURRENCIES — per taal/land
+   ============================================================ */
+const currencies = {
+  us: { symbol: '$',  price: 0.18,  hint: 'Average US: $0.15–$0.22/kWh' },
+  gb: { symbol: '£',  price: 0.28,  hint: 'Average UK: £0.24–£0.34/kWh' },
+  en: { symbol: '€',  price: 0.35,  hint: 'Average BE/NL: €0.30–€0.45' },
+  nl: { symbol: '€',  price: 0.35,  hint: 'Gemiddeld BE/NL: €0,30–€0,45' },
+  de: { symbol: '€',  price: 0.36,  hint: 'Durchschnitt DE: 0,30–0,40 €' },
+  fr: { symbol: '€',  price: 0.23,  hint: 'Moyenne FR: 0,20–0,27 €' },
+  es: { symbol: '€',  price: 0.28,  hint: 'Media ES: 0,25–0,32 €' },
+  it: { symbol: '€',  price: 0.35,  hint: 'Media IT: 0,30–0,40 €' },
+  pt: { symbol: '€',  price: 0.29,  hint: 'Média PT: 0,25–0,32 €' },
+  pl: { symbol: 'zł', price: 1.30,  hint: 'Średnia PL: 1,20–1,50 zł' },
+  sv: { symbol: 'kr', price: 1.20,  hint: 'Genomsnitt SE: 1,00–1,40 kr' },
+  no: { symbol: 'kr', price: 1.30,  hint: 'Gjennomsnitt NO: 1,10–1,60 kr' },
+  ja: { symbol: '¥',  price: 32,    hint: '平均 JP: 28–36 円' },
+  zh: { symbol: '¥',  price: 0.50,  hint: '中国平均: 0.45–0.60 元' },
+  uk: { symbol: '₴',  price: 3.50,  hint: 'Середня UA: 3,00–4,00 ₴' },
+  la: { symbol: '€',  price: 0.35,  hint: 'Medium BE/NL: €0,30–€0,45' }
+};
+
+/* ============================================================
+   CO₂ EQUIVALENT CONSTANTS — per regio
+   ============================================================ */
+const EQUIV = {
+  us: { kmPerUnit: 1.609, gasPerUnit: 0.0283, woodPerUnit: 0.0283, carLabel: 'mi', gasLabel: 'ft³', woodLabel: 'ft³', flight: 'NYC–LA' },
+  default: { kmPerUnit: 1, gasPerUnit: 1, woodPerUnit: 1, carLabel: 'km', gasLabel: 'm³', woodLabel: 'm³', flight: 'BRU–NY' }
+};
+
+/* ============================================================
+   TRANSLATIONS — 15 talen (incl. US)
    ============================================================ */
 const translations = {
+  us: {
+    title: "Solar Panel Calculator",
+    subtitle: "Calculate the exact power and yield of your solar panel system",
+    inputTitle: "System Parameters",
+    panelCount: "Number of panels",
+    panelCountHint: "Typically 15-25 for a house",
+    panelPower: "Power per panel (W)",
+    panelPowerHint: "Modern panels: 350-550 W",
+    efficiency: "System efficiency (%)",
+    efficiencyHint: "Affected by inverter, orientation & shading",
+    location: "Solar irradiation",
+    loc1: "Average (US)",
+    loc2: "High (Southwest)",
+    loc3: "Low (Northwest)",
+    roofAngle: "Roof tilt & Direction",
+    roof1: "Ideal (South, 35°)",
+    roof2: "Good (SE/SW, 25-45°)",
+    roof3: "Fair (East/West, 15-55°)",
+    roof4: "Suboptimal (North/Flat)",
+    elecPrice: "Electricity price ($/kWh)",
+    elecPriceHint: "Average US: $0.15–$0.22/kWh",
+    calculateBtn: "Calculate Yield",
+    infoTitle: "Tips for maximum yield",
+    infoText: "• Southern orientation (between SE and SW)<br>• Tilt angle between 20° and 40°<br>• Ensure shade-free installation<br>• Quality inverter for optimal efficiency",
+    resultsTitle: "Calculation Results",
+    totalPower: "Total Power",
+    yearlyProduction: "Annual Production",
+    dailyProduction: "Daily Production (avg.)",
+    coverageRate: "Coverage Rate",
+    ofConsumption: "of consumption",
+    co2Saved: "🌱 CO₂ Saved",
+    co2Equivalent: "Equivalent to",
+    equivCar: "mi by car (gasoline)",
+    equivGas: "ft³ natural gas",
+    equivWood: "ft³ of wood",
+    equivFlight: "flight NYC–LA",
+    savingsTitle: "💵 Annual Savings",
+    savingsUnit: "/year at $0.18/kWh",
+    savingsOverYears: "over 25 years (indicative)",
+    seasonalChart: "Seasonal Yield",
+    monthlyChart: "Monthly Production",
+    parameter: "Parameter",
+    value: "Value",
+    impact: "Impact on yield",
+    panelType: "Panel type",
+    inverterEff: "Inverter efficiency",
+    temperature: "Temperature loss",
+    systemLoss: "Total system loss",
+    footer1: "This calculator provides a realistic estimate. Actual yield may vary due to local conditions.",
+    footer2: "© 2026 GroenKlimaat | info@magicwhale.eu | For professional advice, consult a certified installer.",
+    privacyLink: "Privacy Policy",
+    termsLink: "Terms and Conditions",
+    months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    seasons: ["Winter","Spring","Summer","Fall"]
+  },
   en: {
     title: "Solar Panel Calculator",
     subtitle: "Calculate the exact power and yield of your solar panel system",
@@ -708,7 +779,7 @@ const translations = {
     roof3: "Mäßig (O/W, 15-55°)",
     roof4: "Suboptimal (Nord/Flach)",
     elecPrice: "Strompreis (€/kWh)",
-    elecPriceHint: "Durchschnitt BE/NL: 0,30–0,45 €",
+    elecPriceHint: "Durchschnitt DE: 0,30–0,40 €",
     calculateBtn: "Ertrag berechnen",
     infoTitle: "Tipps für maximalen Ertrag",
     infoText: "• Südliche Ausrichtung (zwischen SO und SW)<br>• Neigungswinkel zwischen 20° und 40°<br>• Schattenfreie Installation sicherstellen<br>• Qualitätswechselrichter für optimale Effizienz",
@@ -763,7 +834,7 @@ const translations = {
     roof3: "Moyen (E/O, 15-55°)",
     roof4: "Suboptimal (Nord/Plat)",
     elecPrice: "Prix de l'électricité (€/kWh)",
-    elecPriceHint: "Moyenne BE/NL : 0,30–0,45 €",
+    elecPriceHint: "Moyenne FR : 0,20–0,27 €",
     calculateBtn: "Calculer le Rendement",
     infoTitle: "Conseils pour un rendement maximal",
     infoText: "• Orientation sud (entre SE et SO)<br>• Angle d'inclinaison entre 20° et 40°<br>• Installation sans ombre<br>• Onduleur de qualité pour une efficacité optimale",
@@ -780,7 +851,7 @@ const translations = {
     equivWood: "m³ de bois",
     equivFlight: "vol BRU–NY",
     savingsTitle: "💶 Économie Annuelle",
-    savingsUnit: "/an à 0,35 €/kWh",
+    savingsUnit: "/an à 0,23 €/kWh",
     savingsOverYears: "sur 25 ans (indicatif)",
     seasonalChart: "Rendement Saisonnier",
     monthlyChart: "Production Mensuelle",
@@ -818,7 +889,7 @@ const translations = {
     roof3: "Regular (E/O, 15-55°)",
     roof4: "Subóptimo (Norte/Plano)",
     elecPrice: "Precio electricidad (€/kWh)",
-    elecPriceHint: "Media BE/NL: 0,30–0,45 €",
+    elecPriceHint: "Media ES: 0,25–0,32 €",
     calculateBtn: "Calcular Rendimiento",
     infoTitle: "Consejos para máximo rendimiento",
     infoText: "• Orientación sur (entre SE y SO)<br>• Ángulo de inclinación entre 20° y 40°<br>• Instalación libre de sombras<br>• Inversor de calidad para eficiencia óptima",
@@ -835,7 +906,7 @@ const translations = {
     equivWood: "m³ de madera",
     equivFlight: "vuelo BRU–NY",
     savingsTitle: "💶 Ahorro Anual",
-    savingsUnit: "/año a 0,35 €/kWh",
+    savingsUnit: "/año a 0,28 €/kWh",
     savingsOverYears: "en 25 años (indicativo)",
     seasonalChart: "Rendimiento Estacional",
     monthlyChart: "Producción Mensual",
@@ -873,7 +944,7 @@ const translations = {
     roof3: "Discreto (E/O, 15-55°)",
     roof4: "Subottimale (Nord/Piatto)",
     elecPrice: "Prezzo elettricità (€/kWh)",
-    elecPriceHint: "Media BE/NL: 0,30–0,45 €",
+    elecPriceHint: "Media IT: 0,30–0,40 €",
     calculateBtn: "Calcola Resa",
     infoTitle: "Consigli per resa massima",
     infoText: "• Orientamento sud (tra SE e SO)<br>• Angolo d'inclinazione tra 20° e 40°<br>• Installazione senza ombre<br>• Inverter di qualità per efficienza ottimale",
@@ -927,8 +998,8 @@ const translations = {
     roof2: "Bra (SØ/SV, 25-45°)",
     roof3: "Greit (Ø/V, 15-55°)",
     roof4: "Suboptimal (Nord/Flatt)",
-    elecPrice: "Strømpris (€/kWh)",
-    elecPriceHint: "Gjennomsnitt BE/NL: 0,30–0,45 €",
+    elecPrice: "Strømpris (kr/kWh)",
+    elecPriceHint: "Gjennomsnitt NO: 1,10–1,60 kr",
     calculateBtn: "Beregn Avkastning",
     infoTitle: "Tips for maksimal avkastning",
     infoText: "• Sørlig orientering (mellom SØ og SV)<br>• Helningsvinkel mellom 20° og 40°<br>• Sørg for skyggefri installasjon<br>• Kvalitetsinverter for optimal effektivitet",
@@ -945,7 +1016,7 @@ const translations = {
     equivWood: "m³ ved",
     equivFlight: "fly BRU–NY",
     savingsTitle: "💶 Årlig Besparelse",
-    savingsUnit: "/år ved 0,35 €/kWh",
+    savingsUnit: "/år ved 1,30 kr/kWh",
     savingsOverYears: "over 25 år (indikativ)",
     seasonalChart: "Sesongavkastning",
     monthlyChart: "Månedlig Produksjon",
@@ -982,8 +1053,8 @@ const translations = {
     roof2: "Dobre (PD-WS, 25-45°)",
     roof3: "Dostateczne (Wsch/Zach, 15-55°)",
     roof4: "Suboptymalne (Północ/Płaski)",
-    elecPrice: "Cena prądu (€/kWh)",
-    elecPriceHint: "Średnia BE/NL: 0,30–0,45 €",
+    elecPrice: "Cena prądu (zł/kWh)",
+    elecPriceHint: "Średnia PL: 1,20–1,50 zł",
     calculateBtn: "Oblicz Wydajność",
     infoTitle: "Wskazówki dla maksymalnej wydajności",
     infoText: "• Orientacja południowa (między PD-WS)<br>• Kąt nachylenia między 20° a 40°<br>• Zapewnij instalację bez cienia<br>• Wysokiej jakości falownik",
@@ -1000,7 +1071,7 @@ const translations = {
     equivWood: "m³ drewna",
     equivFlight: "lot BRU–NY",
     savingsTitle: "💶 Roczna Oszczędność",
-    savingsUnit: "/rok przy 0,35 €/kWh",
+    savingsUnit: "/rok przy 1,30 zł/kWh",
     savingsOverYears: "w ciągu 25 lat (orientacyjnie)",
     seasonalChart: "Wydajność Sezonowa",
     monthlyChart: "Produkcja Miesięczna",
@@ -1037,8 +1108,8 @@ const translations = {
     roof2: "Bra (SO/SV, 25-45°)",
     roof3: "Okej (Ö/V, 15-55°)",
     roof4: "Suboptimalt (Norr/Platt)",
-    elecPrice: "Elpris (€/kWh)",
-    elecPriceHint: "Genomsnitt BE/NL: 0,30–0,45 €",
+    elecPrice: "Elpris (kr/kWh)",
+    elecPriceHint: "Genomsnitt SE: 1,00–1,40 kr",
     calculateBtn: "Beräkna Avkastning",
     infoTitle: "Tips för maximal avkastning",
     infoText: "• Sydlig orientering (mellan SO och SV)<br>• Lutningsvinkel mellan 20° och 40°<br>• Säkerställ skuggfri installation<br>• Kvalitetsväxelriktare för optimal effektivitet",
@@ -1055,7 +1126,7 @@ const translations = {
     equivWood: "m³ ved",
     equivFlight: "flyg BRU–NY",
     savingsTitle: "💶 Årlig Besparing",
-    savingsUnit: "/år vid 0,35 €/kWh",
+    savingsUnit: "/år vid 1,20 kr/kWh",
     savingsOverYears: "över 25 år (indikativt)",
     seasonalChart: "Säsongsavkastning",
     monthlyChart: "Månatlig Produktion",
@@ -1093,7 +1164,7 @@ const translations = {
     roof3: "Razoável (L/O, 15-55°)",
     roof4: "Subótimo (Norte/Plano)",
     elecPrice: "Preço eletricidade (€/kWh)",
-    elecPriceHint: "Média BE/NL: 0,30–0,45 €",
+    elecPriceHint: "Média PT: 0,25–0,32 €",
     calculateBtn: "Calcular Rendimento",
     infoTitle: "Dicas para rendimento máximo",
     infoText: "• Orientação sul (entre SE e SO)<br>• Ângulo de inclinação entre 20° e 40°<br>• Garanta instalação sem sombras<br>• Inversor de qualidade para eficiência ideal",
@@ -1110,7 +1181,7 @@ const translations = {
     equivWood: "m³ de madeira",
     equivFlight: "voo BRU–NY",
     savingsTitle: "💶 Poupança Anual",
-    savingsUnit: "/ano a 0,35 €/kWh",
+    savingsUnit: "/ano a 0,29 €/kWh",
     savingsOverYears: "em 25 anos (indicativo)",
     seasonalChart: "Rendimento Sazonal",
     monthlyChart: "Produção Mensal",
@@ -1148,7 +1219,7 @@ const translations = {
     roof3: "Satis (Oriens/Occidens, 15-55°)",
     roof4: "Suboptimum (Septentrio/Planum)",
     elecPrice: "Pretium electricitatis (€/kWh)",
-    elecPriceHint: "Medium BE/NL: 0,30–0,45 €",
+    elecPriceHint: "Medium BE/NL: €0,30–€0,45",
     calculateBtn: "Computa Proventum",
     infoTitle: "Consilia pro maximo proventu",
     infoText: "• Orientatio meridionalis (inter SE et SO)<br>• Angulus inclinationis inter 20° et 40°<br>• Cura ut installatio sine umbra sit<br>• Inversor qualitatis pro efficientia optima",
@@ -1165,7 +1236,7 @@ const translations = {
     equivWood: "m³ ligni",
     equivFlight: "volatus BRU–NY",
     savingsTitle: "💶 Compensatio Annua",
-    savingsUnit: "/annum ad 0,35 €/kWh",
+    savingsUnit: "/annum ad €0,35/kWh",
     savingsOverYears: "per 25 annos (indicativum)",
     seasonalChart: "Proventus Temporalis",
     monthlyChart: "Productio Menstrua",
@@ -1202,8 +1273,8 @@ const translations = {
     roof2: "良好 (东南/西南, 25-45°)",
     roof3: "一般 (东/西, 15-55°)",
     roof4: "不理想 (朝北/平顶)",
-    elecPrice: "电价 (€/kWh)",
-    elecPriceHint: "BE/NL 平均：€0.30–€0.45",
+    elecPrice: "电价 (元/kWh)",
+    elecPriceHint: "中国平均：0.45–0.60 元",
     calculateBtn: "计算发电量",
     infoTitle: "最大发电量提示",
     infoText: "• 朝南方向 (东南和西南之间)<br>• 倾斜角在 20° 至 40° 之间<br>• 确保无阴影安装<br>• 优质逆变器以获得最佳效率",
@@ -1220,7 +1291,7 @@ const translations = {
     equivWood: "立方米木材",
     equivFlight: "航班 BRU–NY",
     savingsTitle: "💶 年节省",
-    savingsUnit: "/年，€0.35/kWh",
+    savingsUnit: "/年，0.50 元/kWh",
     savingsOverYears: "25 年累计 (参考)",
     seasonalChart: "季节性发电量",
     monthlyChart: "月发电量",
@@ -1257,8 +1328,8 @@ const translations = {
     roof2: "良好 (南東/南西, 25-45°)",
     roof3: "普通 (東/西, 15-55°)",
     roof4: "最適でない (北向き/平ら)",
-    elecPrice: "電気料金 (€/kWh)",
-    elecPriceHint: "BE/NL 平均：€0.30–€0.45",
+    elecPrice: "電気料金 (円/kWh)",
+    elecPriceHint: "日本平均：28–36 円",
     calculateBtn: "発電量を計算",
     infoTitle: "最大発電量のためのヒント",
     infoText: "• 南向き (南東と南西の間)<br>• 傾斜角 20°〜40°<br>• 影のない設置を確保<br>• 最適な効率のための高品質インバーター",
@@ -1275,7 +1346,7 @@ const translations = {
     equivWood: "m³ 木材",
     equivFlight: "フライト BRU–NY",
     savingsTitle: "💶 年間節約",
-    savingsUnit: "/年、€0.35/kWh",
+    savingsUnit: "/年、32 円/kWh",
     savingsOverYears: "25年間で (参考)",
     seasonalChart: "季節別発電量",
     monthlyChart: "月次発電量",
@@ -1312,8 +1383,8 @@ const translations = {
     roof2: "Добре (ПдСх/ПдЗх, 25-45°)",
     roof3: "Задовільно (Сх/Зх, 15-55°)",
     roof4: "Неоптимально (Північ/Плоский)",
-    elecPrice: "Ціна електроенергії (€/кВт·год)",
-    elecPriceHint: "Середня BE/NL: 0,30–0,45 €",
+    elecPrice: "Ціна електроенергії (₴/кВт·год)",
+    elecPriceHint: "Середня UA: 3,00–4,00 ₴",
     calculateBtn: "Розрахувати виробіток",
     infoTitle: "Поради для максимального виробітку",
     infoText: "• Південна орієнтація (між ПдСх та ПдЗх)<br>• Кут нахилу між 20° та 40°<br>• Забезпечте встановлення без тіні<br>• Якісний інвертор для оптимальної ефективності",
@@ -1330,7 +1401,7 @@ const translations = {
     equivWood: "м³ деревини",
     equivFlight: "рейс BRU–NY",
     savingsTitle: "💶 Річна Економія",
-    savingsUnit: "/рік при 0,35 €/кВт·год",
+    savingsUnit: "/рік при 3,50 ₴/кВт·год",
     savingsOverYears: "за 25 років (орієнтовно)",
     seasonalChart: "Сезонний виробіток",
     monthlyChart: "Місячний виробіток",
@@ -1358,23 +1429,15 @@ let seasonChart = null;
 let monthlyChart = null;
 
 /* ============================================================
-   CO₂ CONSTANTS (per EU EEA 2024)
+   CO₂ CONSTANTS
    ============================================================ */
-const CO2_PER_KWH = 0.25;     // kg CO₂ per kWh (EU grid mix)
+const CO2_PER_KWH = 0.25;
+const CO2_PER_KM_CAR_GASOLINE = 0.12;
+const CO2_PER_M3_GAS          = 1.80;
+const CO2_PER_M3_WOOD         = 1000;
+const CO2_PER_FLIGHT_BRU_NY   = 2000;
 
-/* ============================================================
-   CO₂ EQUIVALENT CONSTANTS (realistisch BE/NL 2026)
-   ============================================================ */
-const CO2_PER_KM_CAR_GASOLINE = 0.12;   // kg CO₂ per km (benzinewagen)
-const CO2_PER_M3_GAS          = 1.80;   // kg CO₂ per m³ aardgas
-const CO2_PER_M3_WOOD         = 1000;   // kg CO₂ opgeslagen per m³ hout
-const CO2_PER_FLIGHT_BRU_NY   = 2000;   // kg CO₂ per retourvlucht Brussel–New York
-
-/* ============================================================
-   FINANCIËLE CONSTANTEN
-   ============================================================ */
-const DEFAULT_ELEC_PRICE = 0.35;   // €/kWh fallback
-const PANEL_LIFETIME_YEARS = 25;   // Verwachte levensduur zonnepanelen
+const PANEL_LIFETIME_YEARS = 25;
 
 /* ============================================================
    LANGUAGE HANDLING
@@ -1385,6 +1448,24 @@ function changeLanguage(lang) {
   document.querySelectorAll('.lang-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
   });
+
+  const curr = currencies[lang] || currencies.en;
+  const priceInput = document.getElementById('elecPrice');
+  const priceLabel = document.getElementById('elecPriceLabel');
+  const priceHint  = document.getElementById('elecPriceHint');
+
+  if (priceLabel) priceLabel.setAttribute('data-currency', curr.symbol);
+  if (priceInput) priceInput.value = curr.price.toFixed(2);
+  if (priceHint) priceHint.textContent = curr.hint;
+
+  /* Update savings card currency class */
+  const savingsCard = document.getElementById('savingsCard');
+  if (savingsCard) {
+    savingsCard.classList.remove('usd', 'gbp');
+    if (lang === 'us') savingsCard.classList.add('usd');
+    if (lang === 'gb') savingsCard.classList.add('gbp');
+  }
+
   translatePage();
   if (document.getElementById('calculateBtn').hasAttribute('data-calculated')) {
     calculateResults();
@@ -1417,7 +1498,9 @@ function calculateResults() {
   const efficiency = parseInt(document.getElementById('efficiency').value) || 85;
   const locationFactor = parseFloat(document.getElementById('location').value) || 1.05;
   const roofFactor = parseFloat(document.getElementById('roofAngle').value) || 1.0;
-  const elecPrice = parseFloat(document.getElementById('elecPrice').value) || DEFAULT_ELEC_PRICE;
+
+  const curr = currencies[currentLanguage] || currencies.en;
+  const elecPrice = parseFloat(document.getElementById('elecPrice').value) || curr.price;
 
   document.getElementById('efficiencyValue').textContent = efficiency + '%';
 
@@ -1434,36 +1517,57 @@ function calculateResults() {
   document.getElementById('dailyProduction').textContent = dailyProduction;
   document.getElementById('coverageRate').textContent = coverageRate + '%';
 
-  /* 🌱 CO₂ BEREKENING */
   const co2Saved = Math.round(annualProduction * CO2_PER_KWH);
   document.getElementById('co2Saved').textContent = co2Saved.toLocaleString('en-US');
 
-  /* 🚗 EQUIVALENT BEREKENING */
-  const carKmEquivalent   = Math.round(co2Saved / CO2_PER_KM_CAR_GASOLINE);
-  const gasM3Equivalent   = Math.round(co2Saved / CO2_PER_M3_GAS);
-  const woodM3Equivalent  = (co2Saved / CO2_PER_M3_WOOD).toFixed(2);
-  const flightEquivalent  = (co2Saved / CO2_PER_FLIGHT_BRU_NY).toFixed(2);
+  /* EQUIVALENT met regionale eenheden */
+  const eq = EQUIV[currentLanguage] || EQUIV.default;
+  const isUS = currentLanguage === 'us';
+  const isGB = currentLanguage === 'gb';
+
+  // Berekening basis in SI
+  const carKmBase   = co2Saved / CO2_PER_KM_CAR_GASOLINE;
+  const gasM3Base   = co2Saved / CO2_PER_M3_GAS;
+  const woodM3Base  = co2Saved / CO2_PER_M3_WOOD;
+  const flightBase  = co2Saved / CO2_PER_FLIGHT_BRU_NY;
+
+  // Omrekenen naar regionale eenheden
+  let carVal, gasVal, woodVal;
+  if (isUS) {
+    carVal  = Math.round(carKmBase / 1.609);
+    gasVal  = Math.round(gasM3Base / 0.0283);
+    woodVal = (woodM3Base / 0.0283).toFixed(2);
+  } else if (isGB) {
+    carVal  = Math.round(carKmBase / 1.609);
+    gasVal  = Math.round(gasM3Base);
+    woodVal = woodM3Base.toFixed(2);
+  } else {
+    carVal  = Math.round(carKmBase);
+    gasVal  = Math.round(gasM3Base);
+    woodVal = woodM3Base.toFixed(2);
+  }
 
   const dict = translations[currentLanguage] || translations.en;
 
   document.getElementById('equivCar').textContent =
-    carKmEquivalent.toLocaleString('en-US') + ' ' + dict.equivCar;
+    carVal.toLocaleString('en-US') + ' ' + dict.equivCar;
   document.getElementById('equivGas').textContent =
-    gasM3Equivalent.toLocaleString('en-US') + ' ' + dict.equivGas;
+    gasVal.toLocaleString('en-US') + ' ' + dict.equivGas;
   document.getElementById('equivWood').textContent =
-    woodM3Equivalent + ' ' + dict.equivWood;
+    woodVal + ' ' + dict.equivWood;
   document.getElementById('equivFlight').textContent =
-    flightEquivalent + ' ' + dict.equivFlight;
+    flightBase.toFixed(2) + ' ' + dict.equivFlight;
 
-  /* 💶 JAARLIJKSE BESPARING */
   const savingsYear = Math.round(annualProduction * elecPrice);
   const savings25 = savingsYear * PANEL_LIFETIME_YEARS;
 
-  document.getElementById('savingsYear').textContent = '€ ' + savingsYear.toLocaleString('en-US');
+  document.getElementById('savingsYear').textContent =
+    curr.symbol + ' ' + savingsYear.toLocaleString('en-US');
   document.getElementById('savingsUnit').textContent =
-    '/year at €' + elecPrice.toFixed(2) + '/kWh';
+    '/year at ' + curr.symbol + elecPrice.toFixed(2) + '/kWh';
   document.getElementById('savings25').textContent =
-    '€ ' + savings25.toLocaleString('en-US') + ' ' + (dict.savingsOverYears || 'over 25 years');
+    curr.symbol + ' ' + savings25.toLocaleString('en-US') + ' ' +
+    (dict.savingsOverYears || 'over 25 years');
 
   updateComparisonTable(panelPower, efficiency);
   generateCharts(annualProduction);
@@ -1594,6 +1698,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('SW geregistreerd:', reg.scope))
+        .catch(err => console.error('SW fout:', err));
+    });
+  }
 </script>
 </body>
 </html>
