@@ -1,6 +1,6 @@
 {
-  "name": "Solar calculator  CO₂ equivalent",
-  "short_name": "Solar  CO₂",
+  "name": "Solar  equivalnt  CO₂ saving",
+  "short_name": "Solar  CO₂ saving",
   "description": "Een Progressive Web App",
   "start_url": "./index.html",
   "scope": "./",
