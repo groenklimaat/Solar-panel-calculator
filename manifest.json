@@ -1,69 +1,26 @@
 {
-  "name": "GroenKlimaat Solar Calculator",
-  "short_name": "SolarCalc",
-  "description": "🌞 Calculate the exact power, yield, CO₂ savings and annual savings of your solar panel system. 14 languages, works offline.",
-  "version": "1.0.8",
+  "name": "Solar calculator  CO₂ equivalent",
+  "short_name": "Solar  CO₂",
+  "description": "Een Progressive Web App",
   "start_url": "./index.html",
   "scope": "./",
-  "id": "/solar-calculator/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "any",
-  "background_color": "#F8FAFC",
-  "theme_color": "#FFB347",
-  "lang": "en",
-  "dir": "ltr",
-  "categories": ["utilities", "productivity", "education"],
-  "prefer_related_applications": false,
-  "privacy_policy_url": "https://groenklimaat.github.io/Solar-panel-calculator/privacy.html",
-  "terms_of_service_url": "https://groenklimaat.github.io/Solar-panel-calculator/terms.html",
+  "background_color": "#0f172a",
+  "theme_color": "#0ea5e9",
+  "lang": "nl",
   "icons": [
     {
-      "src": "icon_512x512_192x192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icon_512x512_512x512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon_512x512_512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "New Calculation",
-      "short_name": "Calculate",
-      "description": "Start a new solar panel calculation",
-      "url": "./index.html?action=calculate",
-      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Privacy Policy",
-      "short_name": "Privacy",
-      "description": "Read our privacy policy",
-      "url": "./privacy.html",
-      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Terms and Conditions",
-      "short_name": "Terms",
-      "description": "Read our terms and conditions",
-      "url": "./terms.html",
-      "icons": [{ "src": "icon_512x512_192x192.png", "sizes": "192x192" }]
+      "purpose": "any maskable"
     }
   ]
 }
